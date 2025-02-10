@@ -2,7 +2,7 @@
 
 Overview:
 
-    Our project is a fashion-based web application designed to make outfit selection easier and more enjoyable. Users can upload pictures of their clothing items, organize them into a digital wardrobe, and receive outfit suggestions based on their personal style and preferences. The app will also integrate features like weather-based outfit recommendations, calendar syncing for event planning, and online shopping suggestions to enhance users' wardrobes.
+Our project is a fashion-based web application designed to make outfit selection easier and more enjoyable. Users can upload pictures of their clothing items, organize them into a digital wardrobe, and receive outfit suggestions based on their personal style and preferences. The app will also integrate features like weather-based outfit recommendations, calendar syncing for event planning, and online shopping suggestions to enhance users' wardrobes.
 
 Key Features
 
