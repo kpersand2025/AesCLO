@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 
-app = Flask(__name__)
-CORS(app)
+app = Flask(__name__, template_folder="templates", static_folder="static")
+CORS(app, resources={r"/api/*": {"origins": "*"}})  # Only apply CORS to API routes
 
 # Configure MongoDB connection
 app.config["MONGO_URI"] = "mongodb://localhost:27017/fashionProject"
@@ -12,8 +12,18 @@ mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
 users_collection = mongo.db.users  # Collection for storing users
 
+# Route for the home page
+@app.route("/")
+def home():
+    return render_template("home.html")  # Ensure home.html exists in the templates folder
+
+# Route for signup page
+@app.route("/signup")
+def signup():
+    return render_template("signup.html")  # Ensure signup.html exists in the templates folder
+
 # Route for user registration
-@app.route("/register", methods=["POST"])
+@app.route("/api/register", methods=["POST"])
 def register():
     data = request.get_json()
     username = data.get("username")
@@ -28,7 +38,7 @@ def register():
     return jsonify({"message": "User registered successfully"}), 201
 
 # Route for user login
-@app.route("/login", methods=["POST"])
+@app.route("/api/login", methods=["POST"])
 def login():
     data = request.get_json()
     username = data.get("username")
