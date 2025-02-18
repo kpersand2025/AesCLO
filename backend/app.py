@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+import uuid  # To generate unique user IDs
 
 app = Flask(__name__, 
             template_folder="../templates",  # Explicitly point to the templates folder
@@ -35,14 +36,31 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        user_id = str(uuid.uuid4())  # Generate unique user ID
         username = request.form.get("username")
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        email = request.form.get("email")
         password = request.form.get("password")
 
+        # Check if username or email already exists
         if users_collection.find_one({"username": username}):
             return "Username already exists."
+        if users_collection.find_one({"email": email}):
+            return "Email already registered."
 
+        # Hash the password
         hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-        users_collection.insert_one({"username": username, "password": hashed_password})
+
+        # Insert user data into MongoDB
+        users_collection.insert_one({
+            "userID": user_id,
+            "username": username,
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "password": hashed_password
+        })
         
         return redirect(url_for("login"))
 
