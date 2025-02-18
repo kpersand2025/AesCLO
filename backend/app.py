@@ -8,7 +8,8 @@ app = Flask(__name__,
             template_folder="../templates",  
             static_folder="../static")  
 
-CORS(app)
+# Allow CORS for all routes
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Configure MongoDB connection
 app.config["MONGO_URI"] = "mongodb://localhost:27017/fashionProject"
@@ -16,21 +17,20 @@ mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
 users_collection = mongo.db.users  # Collection for storing users
 
-# Route for the login page (set as default page)
+# Route for login
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
-        # Check if the username exists in the database
         user = users_collection.find_one({"username": username})
         if user and bcrypt.check_password_hash(user["password"], password):
             return redirect(url_for("home"))
         else:
             return "Invalid credentials. Please try again."
 
-    return render_template("login.html")  # Default page to login
+    return render_template("login.html")
 
 # Route for user signup
 @app.route("/signup", methods=["POST"])
@@ -44,6 +44,10 @@ def signup():
     email = data.get("email")
     password = data.get("password")
 
+    # Validate input
+    if not all([username, first_name, last_name, email, password]):
+        return jsonify({"message": "All fields are required"}), 400
+
     # Check if username or email already exists
     if users_collection.find_one({"$or": [{"username": username}, {"email": email}]}):
         return jsonify({"message": "Username or email already exists"}), 400
@@ -53,7 +57,6 @@ def signup():
 
     # Insert user into MongoDB
     user = {
-        "_id": ObjectId(),
         "username": username,
         "firstName": first_name,
         "lastName": last_name,
@@ -64,10 +67,10 @@ def signup():
 
     return jsonify({"message": "User signed up successfully"}), 201
 
-# Route for the home page after successful login
+# Route for home
 @app.route("/home")
 def home():
-    return render_template("home.html")  # Home page after login
+    return render_template("home.html")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
