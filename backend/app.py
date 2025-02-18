@@ -1,12 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
-import uuid  # To generate unique user IDs
+import uuid
 
 app = Flask(__name__, 
-            template_folder="../templates",  # Explicitly point to the templates folder
-            static_folder="../static")  # Explicitly point to the static folder
+            template_folder="../templates",  
+            static_folder="../static")  
 
 CORS(app)
 
@@ -14,9 +14,9 @@ CORS(app)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/fashionProject"
 mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
-users_collection = mongo.db.users  # Collection for storing users
+users_collection = mongo.db.users  
 
-# Route for the login page (set as default page)
+# Route for the login page (default page)
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -25,56 +25,56 @@ def login():
 
         # Check if the username exists in the database
         user = users_collection.find_one({"username": username})
-        if user and bcrypt.check_password_hash(user["password"], password):
+        if user and bcrypt.check_password_hash(user["passwordHash"], password):
             return redirect(url_for("home"))
         else:
             return "Invalid credentials. Please try again."
 
-    return render_template("login.html")  # Default page to login
+    return render_template("login.html")  
 
 # Route for user registration
-@app.route("/register", methods=["GET", "POST"])
+@app.route("/register", methods=["POST"])
 def register():
-    if request.method == "POST":
-        user_id = str(uuid.uuid4())  # Generate unique user ID
-        username = request.form.get("username")
-        first_name = request.form.get("first_name")
-        last_name = request.form.get("last_name")
-        email = request.form.get("email")
-        password = request.form.get("password")
+    data = request.get_json()
 
-        # Check if username or email already exists
-        if users_collection.find_one({"username": username}):
-            return "Username already exists."
-        if users_collection.find_one({"email": email}):
-            return "Email already registered."
+    # Extract user details
+    username = data.get("username")
+    first_name = data.get("firstName")
+    last_name = data.get("lastName")
+    email = data.get("email")
+    password = data.get("password")
 
-        # Hash the password
-        hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
+    # Check if the username or email already exists
+    if users_collection.find_one({"$or": [{"username": username}, {"email": email}]}):
+        return jsonify({"message": "Username or email already exists"}), 400
 
-        # Insert user data into MongoDB
-        users_collection.insert_one({
-            "userID": user_id,
-            "username": username,
-            "first_name": first_name,
-            "last_name": last_name,
-            "email": email,
-            "password": hashed_password
-        })
-        
-        return redirect(url_for("login"))
+    # Hash the password
+    hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
 
-    return render_template("signup.html")  # Registration page
+    # Create user object
+    new_user = {
+        "userID": str(uuid.uuid4()),  
+        "username": username,
+        "firstName": first_name,
+        "lastName": last_name,
+        "email": email,
+        "passwordHash": hashed_password  
+    }
+
+    # Insert into MongoDB
+    users_collection.insert_one(new_user)
+
+    return jsonify({"message": "User registered successfully"}), 201
 
 # Route for the home page after successful login
 @app.route("/home")
 def home():
-    return render_template("home.html")  # Home page after login
+    return render_template("home.html")  
 
 # Route for signup page
 @app.route("/signup")
 def signup():
-    return render_template("signup.html")  # Render signup page
+    return render_template("signup.html")  
 
 if __name__ == "__main__":
     app.run(debug=True)
