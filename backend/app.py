@@ -1,12 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, redirect, url_for, request, jsonify
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
-import os
 
-app = Flask(__name__, 
-            template_folder="../templates",  # Adjusted to point to the correct location
-            static_folder="../static")  # Adjusted to point to the correct location
+app = Flask(__name__)
 CORS(app)
 
 # Configure MongoDB connection
@@ -15,14 +12,24 @@ mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
 users_collection = mongo.db.users  # Collection for storing users
 
-# Route for home page
+# Route for the root URL, redirect to login
 @app.route("/")
 def home():
-    return render_template("home.html")  # Ensure home.html exists in the templates folder
+    return redirect(url_for("login"))
+
+# Route for user login page
+@app.route("/login")
+def login():
+    return render_template("login.html")  # Ensure login.html exists in the templates folder
+
+# Route for user registration page
+@app.route("/register")
+def register():
+    return render_template("signup.html")  # Ensure signup.html exists in the templates folder
 
 # Route for user registration
 @app.route("/register", methods=["POST"])
-def register():
+def register_user():
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
@@ -35,9 +42,9 @@ def register():
     
     return jsonify({"message": "User registered successfully"}), 201
 
-# Route for user login
+# Route for user login (API endpoint)
 @app.route("/login", methods=["POST"])
-def login():
+def login_user():
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
