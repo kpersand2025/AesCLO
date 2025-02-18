@@ -1,11 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+from bson.objectid import ObjectId
 
 app = Flask(__name__, 
-            template_folder="../templates",  # Explicitly point to the templates folder
-            static_folder="../static")  # Explicitly point to the static folder
+            template_folder="../templates",  
+            static_folder="../static")  
 
 CORS(app)
 
@@ -31,32 +32,42 @@ def login():
 
     return render_template("login.html")  # Default page to login
 
-# Route for user registration
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+# Route for user signup
+@app.route("/signup", methods=["POST"])
+def signup():
+    data = request.json  # Expecting JSON payload from frontend
 
-        if users_collection.find_one({"username": username}):
-            return "Username already exists."
+    # Extract user details
+    username = data.get("username")
+    first_name = data.get("firstName")
+    last_name = data.get("lastName")
+    email = data.get("email")
+    password = data.get("password")
 
-        hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-        users_collection.insert_one({"username": username, "password": hashed_password})
-        
-        return redirect(url_for("login"))
+    # Check if username or email already exists
+    if users_collection.find_one({"$or": [{"username": username}, {"email": email}]}):
+        return jsonify({"message": "Username or email already exists"}), 400
 
-    return render_template("signup.html")  # Registration page
+    # Hash the password before storing
+    hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
+
+    # Insert user into MongoDB
+    user = {
+        "_id": ObjectId(),
+        "username": username,
+        "firstName": first_name,
+        "lastName": last_name,
+        "email": email,
+        "password": hashed_password
+    }
+    users_collection.insert_one(user)
+
+    return jsonify({"message": "User signed up successfully"}), 201
 
 # Route for the home page after successful login
 @app.route("/home")
 def home():
     return render_template("home.html")  # Home page after login
-
-# Route for signup page
-@app.route("/signup")
-def signup():
-    return render_template("signup.html")  # Render signup page
 
 if __name__ == "__main__":
     app.run(debug=True)
