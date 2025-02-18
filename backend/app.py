@@ -64,7 +64,7 @@ def register():
     # Insert into MongoDB
     users_collection.insert_one(new_user)
 
-    return jsonify({"message": "User registered successfully"}), 201
+    return jsonify({"message": "You have successfully created an account!"}), 201
 
 # Route for the home page after successful login
 @app.route("/home")
