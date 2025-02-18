@@ -33,8 +33,8 @@ def login():
     return render_template("login.html")  
 
 # Route for user registration
-@app.route("/signup", methods=["POST"])
-def signup():
+@app.route("/register", methods=["POST"])
+def register():
     data = request.get_json()
 
     # Extract user details
