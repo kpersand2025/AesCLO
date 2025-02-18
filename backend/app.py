@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
-import os
 
 app = Flask(__name__, 
             template_folder="../templates",  # Explicitly point to the templates folder
@@ -53,6 +52,11 @@ def register():
 @app.route("/home")
 def home():
     return render_template("home.html")  # Home page after login
+
+# Route for signup page
+@app.route("/signup")
+def signup():
+    return render_template("signup.html")  # Render signup page
 
 if __name__ == "__main__":
     app.run(debug=True)
