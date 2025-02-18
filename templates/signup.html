@@ -112,7 +112,7 @@
             .then((data) => {
               if (data.message) {
                 message.style.color =
-                  data.message === "You have successfully created an account!"
+                  data.message === "User registered successfully"
                     ? "green"
                     : "red";
                 message.textContent = data.message;
