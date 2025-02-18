@@ -3,7 +3,7 @@ from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 
-app = Flask(__name__, template_folder="templates")  # Explicitly specify templates folder
+app = Flask(__name__)
 CORS(app)
 
 # Configure MongoDB connection
