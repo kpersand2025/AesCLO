@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -12,38 +12,43 @@ mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
 users_collection = mongo.db.users  # Collection for storing users
 
-# Route for the login page (set as default)
-@app.route("/")
+# Route for the login page (set as default page)
+@app.route("/", methods=["GET", "POST"])
 def login():
-    return render_template("signup.html")  # Render signup.html (login page)
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        # Check if the username exists in the database
+        user = users_collection.find_one({"username": username})
+        if user and bcrypt.check_password_hash(user["password"], password):
+            return redirect(url_for("home"))
+        else:
+            return "Invalid credentials. Please try again."
+
+    return render_template("login.html")  # Default page to login
 
 # Route for user registration
-@app.route("/register", methods=["POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    data = request.get_json()
-    username = data.get("username")
-    password = data.get("password")
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-    if users_collection.find_one({"username": username}):
-        return jsonify({"message": "Username already exists"}), 400
+        if users_collection.find_one({"username": username}):
+            return "Username already exists."
 
-    hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-    users_collection.insert_one({"username": username, "password": hashed_password})
-    
-    return jsonify({"message": "User registered successfully"}), 201
+        hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
+        users_collection.insert_one({"username": username, "password": hashed_password})
+        
+        return redirect(url_for("login"))
 
-# Route for user login
-@app.route("/login", methods=["POST"])
-def login_user():
-    data = request.get_json()
-    username = data.get("username")
-    password = data.get("password")
+    return render_template("signup.html")  # Registration page
 
-    user = users_collection.find_one({"username": username})
-    if user and bcrypt.check_password_hash(user["password"], password):
-        return jsonify({"message": "Login successful"}), 200
-    else:
-        return jsonify({"message": "Invalid credentials"}), 401
+# Route for the home page after successful login
+@app.route("/home")
+def home():
+    return render_template("home.html")  # Home page after login
 
 if __name__ == "__main__":
     app.run(debug=True)
