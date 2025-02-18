@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Wardrobe</title>
+    <link rel="stylesheet" href="wardrobeStyle.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Your Wardrobe</h1>
+      <p>
+        Here are the clothes you have uploaded. You can add or remove items from
+        your wardrobe.
+      </p>
+      <div id="wardrobeDisplay">
+        <!-- Uploaded clothing items will appear here -->
+      </div>
+      <button id="addItemBtn">Add New Item</button>
+      <a href="home.html" class="btn">Back to Home</a>
+    </div>
+
+    <script>
+      // Example wardrobe items - you can replace this with data from your backend or storage
+      const wardrobeItems = [
+        { id: 1, name: "Red T-shirt", category: "Top" },
+        { id: 2, name: "Blue Jeans", category: "Bottom" },
+        { id: 3, name: "Black Sneakers", category: "Shoes" },
+        { id: 4, name: "Green Hoodie", category: "Top" },
+        { id: 5, name: "Black Skirt", category: "Bottom" },
+        { id: 6, name: "White Boots", category: "Shoes" },
+      ];
+
+      // Function to display wardrobe items
+      function displayWardrobe() {
+        const wardrobeDisplay = document.getElementById("wardrobeDisplay");
+        wardrobeDisplay.innerHTML = ""; // Clear current wardrobe display
+
+        wardrobeItems.forEach((item) => {
+          const itemDiv = document.createElement("div");
+          itemDiv.classList.add("item");
+          itemDiv.innerHTML = `
+                    <span class="item-name">${item.name}</span>
+                    <span class="item-category">${item.category}</span>
+                `;
+          wardrobeDisplay.appendChild(itemDiv);
+        });
+      }
+
+      // Add new item - just an example, you would integrate with a form to actually upload new items
+      document.getElementById("addItemBtn").addEventListener("click", () => {
+        alert("Functionality to add new items is not implemented yet.");
+      });
+
+      // Initial display of wardrobe
+      displayWardrobe();
+    </script>
+  </body>
+</html>

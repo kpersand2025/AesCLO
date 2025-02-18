@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Clothing - Fashion App</title>
+    <link rel="stylesheet" href="uploadStyle.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Upload Your Clothing Items</h1>
+      <p>Add images of your clothes to your virtual wardrobe.</p>
+
+      <form id="uploadForm" enctype="multipart/form-data">
+        <label for="fileInput" class="file-label">Choose an Image</label>
+        <input type="file" id="fileInput" accept="image/*" />
+
+        <label for="category">Category:</label>
+        <select id="category">
+          <option value="top">Top</option>
+          <option value="bottom">Bottom</option>
+          <option value="shoes">Shoes</option>
+          <option value="accessories">Accessories</option>
+        </select>
+
+        <button type="submit" class="btn">Upload</button>
+      </form>
+
+      <div class="preview">
+        <p id="fileName" style="display: none"></p>
+        <img id="previewImage" src="#" alt="Preview" style="display: none" />
+      </div>
+
+      <a href="home.html" class="back-btn">Back to Home</a>
+    </div>
+
+    <script>
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const previewImage = document.getElementById("previewImage");
+              const fileName = document.getElementById("fileName");
+
+              previewImage.src = e.target.result;
+              previewImage.style.display = "block";
+
+              fileName.textContent = file.name;
+              fileName.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+    </script>
+  </body>
+</html>

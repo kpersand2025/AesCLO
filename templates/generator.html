@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generate Outfit</title>
+    <link rel="stylesheet" href="generatorStyle.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Outfit Generator</h1>
+      <p>Click the button below to generate a random outfit.</p>
+      <button id="generateBtn">Generate Outfit</button>
+      <div id="outfitDisplay">
+        <p>Your outfit will appear here.</p>
+      </div>
+      <a href="home.html" class="btn">Back to Home</a>
+    </div>
+
+    <script>
+      // Example wardrobe items
+      const wardrobe = {
+        tops: ["T-shirt", "Hoodie", "Blouse"],
+        bottoms: ["Jeans", "Shorts", "Skirt"],
+        shoes: ["Sneakers", "Boots", "Heels"],
+      };
+
+      // Function to generate outfit
+      function generateOutfit() {
+        if (
+          wardrobe.tops.length >= 3 &&
+          wardrobe.bottoms.length >= 3 &&
+          wardrobe.shoes.length >= 3
+        ) {
+          const top =
+            wardrobe.tops[Math.floor(Math.random() * wardrobe.tops.length)];
+          const bottom =
+            wardrobe.bottoms[
+              Math.floor(Math.random() * wardrobe.bottoms.length)
+            ];
+          const shoe =
+            wardrobe.shoes[Math.floor(Math.random() * wardrobe.shoes.length)];
+
+          // Display generated outfit
+          document.getElementById("outfitDisplay").innerHTML = `
+                    <div class="outfit">
+                        <div class="item">${top}</div>
+                        <div class="item">${bottom}</div>
+                        <div class="item">${shoe}</div>
+                    </div>
+                `;
+        } else {
+          // Inform user if not enough items
+          document.getElementById(
+            "outfitDisplay"
+          ).innerHTML = `<p>You need at least 3 tops, 3 bottoms, and 3 shoes in your wardrobe to generate an outfit.</p>`;
+        }
+      }
+
+      // Event listener for button click
+      document
+        .getElementById("generateBtn")
+        .addEventListener("click", generateOutfit);
+    </script>
+  </body>
+</html>

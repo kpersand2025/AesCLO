@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Metadata and linking to the external stylesheet -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Form</title>
+    <link rel="stylesheet" href="loginStyle.css" />
+  </head>
+  <body>
+    <!-- Main login section -->
+    <section class="signin">
+      <div class="content">
+        <!-- Logo image for the login form -->
+        <img src="AesCLO.jpg" alt="AesCLO Logo" class="logo" />
+        <h2>Log in to AesCLO</h2>
+
+        <!-- Form fields for username and password -->
+        <form method="post" id="loginForm">
+          <div class="form">
+            <!-- Username input field -->
+            <div class="inputBox">
+              <input type="text" id="name" name="name" required />
+              <i>Username</i>
+            </div>
+
+            <!-- Password input field with show/hide feature -->
+            <div class="inputBox">
+              <input type="password" id="password" name="password" required />
+              <i>Password</i>
+
+              <!-- Show/hide toggle button for the password -->
+              <span
+                id="toggle-password"
+                class="toggle-password"
+                style="display: none"
+                >Show</span
+              >
+            </div>
+
+            <!-- Submit button for the login form -->
+            <div class="inputBox">
+              <input type="submit" value="Log in" />
+            </div>
+          </div>
+        </form>
+
+        <!-- Link to create a new account if the user doesn't have one -->
+        <p class="create-account">
+          Don't have an account? <a href="signup.html">Create one</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- Inline JavaScript for password toggle functionality -->
+    <script>
+      // Password toggle functionality for the login form
+      const passwordField = document.getElementById("password");
+      const toggleText = document.getElementById("toggle-password");
+
+      // Show/hide toggle functionality for password visibility
+      document
+        .getElementById("toggle-password")
+        .addEventListener("click", function () {
+          if (passwordField.type === "password") {
+            passwordField.type = "text";
+            toggleText.textContent = "Hide";
+          } else {
+            passwordField.type = "password";
+            toggleText.textContent = "Show";
+          }
+        });
+
+      // Show or hide the toggle button based on the password field content
+      passwordField.addEventListener("input", function () {
+        if (passwordField.value) {
+          toggleText.style.display = "inline";
+        } else {
+          toggleText.style.display = "none";
+        }
+      });
+
+      // Form submission handler
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Get form data
+          const username = document.getElementById("name").value;
+          const password = document.getElementById("password").value;
+
+          // Send the data to Flask backend for login verification
+          fetch("http://127.0.0.1:5000/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.message === "Login successful") {
+                // Redirect to home.html after successful login
+                window.location.href = "home.html";
+              } else {
+                alert("Invalid credentials. Please try again.");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        });
+    </script>
+  </body>
+</html>
