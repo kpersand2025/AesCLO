@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Graphik-Regular-Web&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Graphik-Regular-Web', sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: rgb(12, 28, 45)
+}
+
+section.signin {
+  width: 400px;
+  background: #546577;  
+  padding: 40px;
+  border-radius: 4px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
+}
+
+section .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+section .content .logo {
+  width: 200px;
+  height: auto;
+  border-radius: 8px;
+}
+
+section .content h2 {
+  font-size: 1.5em;
+  color: rgb(255, 255, 255);
+}
+
+section .content .form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+section .content .form .inputBox {
+  position: relative;
+  width: 100%;
+}
+
+section .content .form .inputBox input {
+  width: 100%;
+  background: rgb(209, 209, 209);
+  border: none;
+  outline: none;
+  padding: 25px 10px 7.5px;
+  border-radius: 4px;
+  color: rgb(0, 0, 0);
+  font-weight: 500;
+  font-size: 1em;
+}
+
+section .content .form .inputBox i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-style: normal;
+  color: rgb(0, 0, 0);
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+section .content .form .inputBox input:focus ~ i,
+section .content .form .inputBox input:valid ~ i {
+  transform: translateY(-20px);
+  font-size: 0.8em;
+  color: rgb(0, 0, 0);
+}
+
+section .content .form .inputBox input[type="submit"] {
+  padding: 10px;
+  background: rgb(255, 226, 3);
+  color: #000;
+  font-weight: 600;
+  font-size: 1.35em;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  transition: background 0.3s ease; 
+}
+
+section .content .form .inputBox input[type="submit"]:hover {
+  background: rgb(255, 245, 120); 
+}
+
+input[type="submit"]:active {
+  opacity: 0.6;
+}
+
+section .content .create-account {
+  margin-top: 15px;
+  font-size: 0.9em;
+  color: #fff;
+  text-align: center;
+}
+
+section .content .create-account a {
+  color: rgb(0, 166, 255);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+section .content .create-account a:hover {
+  text-decoration: underline;
+}
+
+/* Keep the previous styles unchanged */
+
+section .content .form .inputBox #toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9em;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+}
+
+section .content .form .inputBox #toggle-password:hover {
+  text-decoration: underline;
+}

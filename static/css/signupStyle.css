@@ -1,0 +1,104 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color:rgb(12, 28, 45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #546577;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
+    width: 300px;
+}
+
+.logo {
+    width: 140px;
+    height: auto;
+    border-radius: 8px;
+    margin-left: 80px;
+  }
+
+h2 {
+    margin-bottom: 20px;
+    color: rgb(255, 255, 255);
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: rgb(255, 255, 255);
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #5cb85c;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4cae4c;
+}
+
+#message {
+    margin-top: 20px;
+    text-align: center;
+    color: white;
+}
+
+.error {
+    color: red;
+    font-size: 0.9em;
+}
+
+.password-hint {
+    font-size: 0.9em;
+    color: white;
+    margin-top: 5px;
+    display: none;
+}
+
+.password-strength {
+    margin-top: 5px;
+}
+
+.password-strength div {
+    height: 5px;
+    border-radius: 4px;
+}
+
+.weak {
+    width: 33%;
+    background-color: red;
+}
+
+.medium {
+    width: 66%;
+    background-color: orange;
+}
+
+.strong {
+    width: 100%;
+    background-color: green;
+}
