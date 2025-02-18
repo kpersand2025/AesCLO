@@ -2,8 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, 
+            template_folder="../templates",  # Explicitly point to the templates folder
+            static_folder="../static")  # Explicitly point to the static folder
+
 CORS(app)
 
 # Configure MongoDB connection
