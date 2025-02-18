@@ -32,8 +32,8 @@ def login():
     return render_template("login.html")  # Default page to login
 
 # Route for user registration
-@app.route("/register", methods=["GET", "POST"])
-def register():
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
