@@ -17,20 +17,23 @@ bcrypt = Bcrypt(app)
 users_collection = mongo.db.users  
 
 # Route for the login page (default page)
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        # Check if the username exists in the database
-        user = users_collection.find_one({"username": username})
-        if user and bcrypt.check_password_hash(user["passwordHash"], password):
-            return redirect(url_for("home"))
-        else:
-            return "Invalid credentials. Please try again."
-
+@app.route("/", methods=["GET"])
+def login_page():
     return render_template("login.html")  
+
+# New dedicated login route
+@app.route("/login", methods=["POST"])
+def login_post():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+
+    # Check if the username exists in the database
+    user = users_collection.find_one({"username": username})
+    if user and bcrypt.check_password_hash(user["passwordHash"], password):
+        return jsonify({"message": "Login successful"}), 200
+    else:
+        return jsonify({"message": "Invalid credentials"}), 401
 
 # Route for user registration
 @app.route("/register", methods=["POST"])

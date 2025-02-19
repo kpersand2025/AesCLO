@@ -104,7 +104,7 @@
             .then((data) => {
               if (data.message === "Login successful") {
                 // Redirect to home.html after successful login
-                window.location.href = "home.html";
+                window.location.href = "{{ url_for('home') }}";
               } else {
                 alert("Invalid credentials. Please try again.");
               }
