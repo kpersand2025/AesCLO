@@ -79,5 +79,20 @@ def home():
 def signup():
     return render_template("signup.html")  
 
+# Route for upload page
+@app.route("/upload")
+def upload():
+    return render_template("upload.html") 
+
+# Route for generator page
+@app.route("/generator")
+def generator():
+    return render_template("generator.html") 
+
+# Route for wardrobe page
+@app.route("/wardrobe")
+def wardrobe():
+    return render_template("wardrobe.html")    
+
 if __name__ == "__main__":
     app.run(debug=True)
