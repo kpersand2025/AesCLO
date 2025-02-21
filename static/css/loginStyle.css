@@ -12,12 +12,12 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: rgb(12, 28, 45)
+  background: rgb(12, 28, 45);
 }
 
 section.signin {
   width: 400px;
-  background: #546577;  
+  background: #546577;
   padding: 40px;
   border-radius: 4px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
@@ -63,6 +63,7 @@ section .content .form .inputBox input {
   color: rgb(0, 0, 0);
   font-weight: 500;
   font-size: 1em;
+  margin-right: 20px;
 }
 
 section .content .form .inputBox i {
@@ -92,11 +93,11 @@ section .content .form .inputBox input[type="submit"] {
   cursor: pointer;
   border: none;
   border-radius: 4px;
-  transition: background 0.3s ease; 
+  transition: background 0.3s ease;
 }
 
 section .content .form .inputBox input[type="submit"]:hover {
-  background: rgb(255, 245, 120); 
+  background: rgb(255, 245, 120);
 }
 
 input[type="submit"]:active {
@@ -120,8 +121,6 @@ section .content .create-account a:hover {
   text-decoration: underline;
 }
 
-/* Keep the previous styles unchanged */
-
 section .content .form .inputBox #toggle-password {
   position: absolute;
   right: 10px;
@@ -136,4 +135,13 @@ section .content .form .inputBox #toggle-password {
 
 section .content .form .inputBox #toggle-password:hover {
   text-decoration: underline;
+}
+
+/* Styling for the error message */
+#error-message {
+  color: red;
+  font-size: 13px;
+  margin-top: -10px;
+  margin-bottom: -10px;
+  display: none; 
 }
