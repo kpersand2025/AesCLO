@@ -9,51 +9,39 @@
   <body>
     <div class="container">
       <h1>Your Wardrobe</h1>
-      <p>
-        Here are the clothes you have uploaded. You can add or remove items from
-        your wardrobe.
-      </p>
-      <div id="wardrobeDisplay">
-        <!-- Uploaded clothing items will appear here -->
+      <p>Here are the clothes you have uploaded, categorized by type.</p>
+
+      <!-- Tops Section -->
+      <h2>Tops</h2>
+      <div class="category" id="tops">
+        {% for item in wardrobe_items if item.category == 'top' %}
+        <div class="wardrobe-item">
+          <img src="{{ item.image_url }}" alt="Top" class="wardrobe-image" />
+        </div>
+        {% endfor %}
       </div>
-      <button id="addItemBtn">Add New Item</button>
+
+      <!-- Bottoms Section -->
+      <h2>Bottoms</h2>
+      <div class="category" id="bottoms">
+        {% for item in wardrobe_items if item.category == 'bottom' %}
+        <div class="wardrobe-item">
+          <img src="{{ item.image_url }}" alt="Bottom" class="wardrobe-image" />
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Shoes Section -->
+      <h2>Shoes</h2>
+      <div class="category" id="shoes">
+        {% for item in wardrobe_items if item.category == 'shoes' %}
+        <div class="wardrobe-item">
+          <img src="{{ item.image_url }}" alt="Shoes" class="wardrobe-image" />
+        </div>
+        {% endfor %}
+      </div>
+
       <a href="{{ url_for('home') }}" class="btn">Back to Home</a>
     </div>
-
-    <script>
-      // Example wardrobe items - you can replace this with data from your backend or storage
-      const wardrobeItems = [
-        { id: 1, name: "Red T-shirt", category: "Top" },
-        { id: 2, name: "Blue Jeans", category: "Bottom" },
-        { id: 3, name: "Black Sneakers", category: "Shoes" },
-        { id: 4, name: "Green Hoodie", category: "Top" },
-        { id: 5, name: "Black Skirt", category: "Bottom" },
-        { id: 6, name: "White Boots", category: "Shoes" },
-      ];
-
-      // Function to display wardrobe items
-      function displayWardrobe() {
-        const wardrobeDisplay = document.getElementById("wardrobeDisplay");
-        wardrobeDisplay.innerHTML = ""; // Clear current wardrobe display
-
-        wardrobeItems.forEach((item) => {
-          const itemDiv = document.createElement("div");
-          itemDiv.classList.add("item");
-          itemDiv.innerHTML = `
-                    <span class="item-name">${item.name}</span>
-                    <span class="item-category">${item.category}</span>
-                `;
-          wardrobeDisplay.appendChild(itemDiv);
-        });
-      }
-
-      // Add new item - just an example, you would integrate with a form to actually upload new items
-      document.getElementById("addItemBtn").addEventListener("click", () => {
-        alert("Functionality to add new items is not implemented yet.");
-      });
-
-      // Initial display of wardrobe
-      displayWardrobe();
-    </script>
   </body>
 </html>

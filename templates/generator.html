@@ -18,46 +18,42 @@
     </div>
 
     <script>
-      // Example wardrobe items
-      const wardrobe = {
-        tops: ["T-shirt", "Hoodie", "Blouse"],
-        bottoms: ["Jeans", "Shorts", "Skirt"],
-        shoes: ["Sneakers", "Boots", "Heels"],
-      };
-
-      // Function to generate outfit
-      function generateOutfit() {
-        if (
-          wardrobe.tops.length >= 3 &&
-          wardrobe.bottoms.length >= 3 &&
-          wardrobe.shoes.length >= 3
-        ) {
-          const top =
-            wardrobe.tops[Math.floor(Math.random() * wardrobe.tops.length)];
-          const bottom =
-            wardrobe.bottoms[
-              Math.floor(Math.random() * wardrobe.bottoms.length)
-            ];
-          const shoe =
-            wardrobe.shoes[Math.floor(Math.random() * wardrobe.shoes.length)];
-
-          // Display generated outfit
-          document.getElementById("outfitDisplay").innerHTML = `
-                    <div class="outfit">
-                        <div class="item">${top}</div>
-                        <div class="item">${bottom}</div>
-                        <div class="item">${shoe}</div>
-                    </div>
-                `;
-        } else {
-          // Inform user if not enough items
-          document.getElementById(
-            "outfitDisplay"
-          ).innerHTML = `<p>You need at least 3 tops, 3 bottoms, and 3 shoes in your wardrobe to generate an outfit.</p>`;
-        }
+      // Fetch wardrobe data from backend
+      async function fetchWardrobe() {
+        const response = await fetch("/get_wardrobe");
+        return response.json();
       }
 
-      // Event listener for button click
+      async function generateOutfit() {
+        const wardrobe = await fetchWardrobe();
+
+        if (
+          wardrobe.tops.length < 2 ||
+          wardrobe.bottoms.length < 2 ||
+          wardrobe.shoes.length < 2
+        ) {
+          document.getElementById("outfitDisplay").innerHTML =
+            "<p>You need at least 2 tops, 2 bottoms, and 2 shoes in your wardrobe to generate an outfit.</p>";
+          return;
+        }
+
+        const top =
+          wardrobe.tops[Math.floor(Math.random() * wardrobe.tops.length)];
+        const bottom =
+          wardrobe.bottoms[Math.floor(Math.random() * wardrobe.bottoms.length)];
+        const shoe =
+          wardrobe.shoes[Math.floor(Math.random() * wardrobe.shoes.length)];
+
+        // Display generated outfit vertically
+        document.getElementById("outfitDisplay").innerHTML = `
+          <div class="outfit">
+            <div class="outfit-item"><img src="${top.image_url}" alt="Top"></div>
+            <div class="outfit-item"><img src="${bottom.image_url}" alt="Bottom"></div>
+            <div class="outfit-item"><img src="${shoe.image_url}" alt="Shoes"></div>
+          </div>
+        `;
+      }
+
       document
         .getElementById("generateBtn")
         .addEventListener("click", generateOutfit);

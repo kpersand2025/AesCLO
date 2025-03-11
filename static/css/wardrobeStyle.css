@@ -76,3 +76,21 @@ button:hover {
 .btn:hover {
     background-color: #495057;
 }
+
+.category {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  .wardrobe-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    background: #f9f9f9;
+  }
+  .wardrobe-image {
+    max-width: 150px;
+    height: auto;
+    display: block;
+  }

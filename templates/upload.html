@@ -11,12 +11,31 @@
       <h1>Upload Your Clothing Items</h1>
       <p>Add images of your clothes to your virtual wardrobe.</p>
 
-      <form id="uploadForm" enctype="multipart/form-data">
+      <!-- Display success message if available -->
+      {% if success_message %}
+      <div class="alert alert-success">
+        <strong>Success!</strong> {{ success_message }}
+      </div>
+      {% endif %}
+
+      <!-- Image upload form -->
+      <form
+        id="uploadForm"
+        enctype="multipart/form-data"
+        method="POST"
+        action="{{ url_for('upload_page') }}"
+      >
         <label for="fileInput" class="file-label">Choose an Image</label>
-        <input type="file" id="fileInput" accept="image/*" />
+        <input
+          type="file"
+          id="fileInput"
+          name="file"
+          accept="image/*"
+          required
+        />
 
         <label for="category">Category:</label>
-        <select id="category">
+        <select id="category" name="category" required>
           <option value="top">Top</option>
           <option value="bottom">Bottom</option>
           <option value="shoes">Shoes</option>
