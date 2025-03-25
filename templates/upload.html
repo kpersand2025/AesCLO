@@ -3,55 +3,124 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Upload Clothing - Fashion App</title>
+    <title>Upload Clothing - AesCLO</title>
     <link rel="stylesheet" href="static/css/uploadStyle.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Graphik-Regular-Web&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <div class="container">
-      <h1>Upload Your Clothing Items</h1>
-      <p>Add images of your clothes to your virtual wardrobe.</p>
+    <header>
+      <div class="logo">AesCLO</div>
+      <nav>
+        <a href="{{ url_for('home') }}" class="nav-btn {% if request.endpoint == 'home' %}active{% endif %}" {% if request.endpoint == 'home' %}aria-current="page"{% endif %}>
+          <span class="material-symbols-outlined">home</span>
+          Home
+        </a>
+        <a href="{{ url_for('upload_page') }}" class="nav-btn {% if request.endpoint == 'upload_page' %}active{% endif %}" {% if request.endpoint == 'upload_page' %}aria-current="page"{% endif %}>
+          <span class="material-symbols-outlined">cloud_upload</span>
+          Upload
+        </a>
+        <a href="{{ url_for('wardrobe') }}" class="nav-btn {% if request.endpoint == 'wardrobe' %}active{% endif %}" {% if request.endpoint == 'wardrobe' %}aria-current="page"{% endif %}>
+          <span class="material-symbols-outlined">checkroom</span>
+          Wardrobe
+        </a>
+        <a href="{{ url_for('generator') }}" class="nav-btn {% if request.endpoint == 'generator' %}active{% endif %}" {% if request.endpoint == 'generator' %}aria-current="page"{% endif %}>
+          <span class="material-symbols-outlined">auto_awesome</span>
+          Generator
+        </a>
+        <a href="{{ url_for('saved_outfits') }}" class="nav-btn {% if request.endpoint == 'saved_outfits' %}active{% endif %}" {% if request.endpoint == 'saved_outfits' %}aria-current="page"{% endif %}>
+          <span class="material-symbols-outlined">bookmark</span>
+          Favorites
+        </a>
+        <a href="{{ url_for('logout') }}" class="nav-btn logout-btn">
+          <span class="material-symbols-outlined">logout</span>
+          Logout
+        </a>
+      </nav>
+    </header>
 
-      <!-- Display success message if available -->
-      {% if success_message %}
-      <div class="alert alert-success">
-        <strong>Success!</strong> {{ success_message }}
+    <section class="upload-content">
+      <div class="content">
+        <h1>Upload Your Clothing Items</h1>
+        <p class="subtitle">
+          Add images of your clothes to your virtual wardrobe.
+        </p>
+
+        <!-- Display success message if available -->
+        {% if success_message %}
+        <div class="alert alert-success">
+          <span class="material-symbols-outlined">check_circle</span>
+          <span>{{ success_message }}</span>
+        </div>
+        {% endif %}
+
+        <div class="upload-container">
+          <!-- Preview panel -->
+          <div class="preview-panel">
+            <div class="preview-placeholder" id="previewPlaceholder">
+              <span class="material-symbols-outlined">image</span>
+              <p>Image preview will appear here</p>
+            </div>
+            <img
+              id="previewImage"
+              src="#"
+              alt="Preview"
+              style="display: none"
+            />
+            <p id="fileName" class="file-name" style="display: none"></p>
+          </div>
+
+          <!-- Form panel -->
+          <div class="form-panel">
+            <form
+              id="uploadForm"
+              enctype="multipart/form-data"
+              method="POST"
+              action="{{ url_for('upload_page') }}"
+            >
+              <label for="fileInput" class="file-label">
+                <span class="material-symbols-outlined">cloud_upload</span>
+                Choose an Image
+              </label>
+              <input
+                type="file"
+                id="fileInput"
+                name="file"
+                accept="image/*"
+                required
+              />
+
+              <div class="form-group">
+                <label for="category">Category:</label>
+                <select id="category" name="category" required>
+                  <option value="" disabled selected>Select a category</option>
+                  <option value="top">Top</option>
+                  <option value="bottom">Bottom</option>
+                  <option value="shoes">Shoes</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn upload-btn">
+                <span class="material-symbols-outlined"
+                  >add_photo_alternate</span
+                >
+                Upload to Wardrobe
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
-      {% endif %}
+    </section>
 
-      <!-- Image upload form -->
-      <form
-        id="uploadForm"
-        enctype="multipart/form-data"
-        method="POST"
-        action="{{ url_for('upload_page') }}"
-      >
-        <label for="fileInput" class="file-label">Choose an Image</label>
-        <input
-          type="file"
-          id="fileInput"
-          name="file"
-          accept="image/*"
-          required
-        />
-
-        <label for="category">Category:</label>
-        <select id="category" name="category" required>
-          <option value="top">Top</option>
-          <option value="bottom">Bottom</option>
-          <option value="shoes">Shoes</option>
-          <option value="accessories">Accessories</option>
-        </select>
-
-        <button type="submit" class="btn">Upload</button>
-      </form>
-
-      <div class="preview">
-        <p id="fileName" style="display: none"></p>
-        <img id="previewImage" src="#" alt="Preview" style="display: none" />
-      </div>
-
-      <a href="{{ url_for('home') }}" class="back-btn">Back to Home</a>
-    </div>
+    <footer>
+      <p>&copy; 2025 AesCLO - Your Personal Wardrobe Assistant</p>
+    </footer>
 
     <script>
       document
@@ -63,9 +132,11 @@
             reader.onload = function (e) {
               const previewImage = document.getElementById("previewImage");
               const fileName = document.getElementById("fileName");
+              const placeholder = document.getElementById("previewPlaceholder");
 
               previewImage.src = e.target.result;
               previewImage.style.display = "block";
+              placeholder.style.display = "none";
 
               fileName.textContent = file.name;
               fileName.style.display = "block";

@@ -3,27 +3,79 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fashion App - Home</title>
+    <title>AesCLO - Your Personal Wardrobe Assistant</title>
     <link rel="stylesheet" href="static/css/homeStyle.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Graphik-Regular-Web&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Righteous&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <div class="logout-container">
-      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-    </div>
+    <header>
+      <div class="logo">AesCLO</div>
+      <nav>
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+          <span class="material-symbols-outlined">logout</span>
+          Logout
+        </a>
+      </nav>
+    </header>
 
-    <div class="container">
-      <h1>Welcome to AesCLO</h1>
-      <p>
-        Upload your clothes, organize your wardrobe, and generate stylish
-        outfits effortlessly.
-      </p>
-      <div class="buttons">
-        <a href="{{ url_for('upload_page') }}" class="btn"
-          >Upload Clothing Items</a
-        >
-        <a href="{{ url_for('generator') }}" class="btn">Generate Outfit</a>
-        <a href="{{ url_for('wardrobe') }}" class="btn">View Wardrobe</a>
+    <section class="home-content">
+      <div class="content">
+        <h1>Welcome to AesCLO</h1>
+        <p class="tagline">
+          Upload your clothes, organize your wardrobe, generate stylish outfits,
+          and access your favorites.
+        </p>
+
+        <div class="features">
+          <div class="feature-card">
+            <span class="material-symbols-outlined">cloud_upload</span>
+            <h3>Virtualize Your Wardrobe</h3>
+            <p>Upload and categorize your clothing items for easy access.</p>
+            <a href="{{ url_for('upload_page') }}" class="btn">Upload Items</a>
+          </div>
+
+          <div class="feature-card">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <h3>Outfit Generation</h3>
+            <p>
+              Get personalized outfit suggestions based on your style
+              preferences.
+            </p>
+            <a href="{{ url_for('generator') }}" class="btn">Create Outfit</a>
+          </div>
+
+          <div class="feature-card">
+            <span class="material-symbols-outlined">grid_view</span>
+            <h3>Explore Collection</h3>
+            <p>View and manage your entire wardrobe in one place.</p>
+            <a href="{{ url_for('wardrobe') }}" class="btn">View Wardrobe</a>
+          </div>
+
+          <div class="feature-card">
+            <span class="material-symbols-outlined">bookmark</span>
+            <h3>Saved Outfits</h3>
+            <p>Access and manage your favorite outfit combinations.</p>
+            <a href="{{ url_for('saved_outfits') }}" class="btn"
+              >View Favorites</a
+            >
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 AesCLO - Your Personal Fashion Assistant</p>
+    </footer>
   </body>
 </html>

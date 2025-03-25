@@ -1,61 +1,264 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Graphik-Regular-Web&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    font-family: 'Graphik-Regular-Web', sans-serif;
 }
 
-.logout-container {
-    position: absolute;
-    top: 10px;
-    right: 20px;
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ffe6f0 0%, #fff6fa 100%);
+}
+
+/* Header styling */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    border-bottom: 2px solid #f7d6a6;
+}
+
+.logo {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #1a1158;
+    letter-spacing: 0.5px;
+    margin-right: 20px;
+    font-family: 'Righteous', sans-serif;
 }
 
 .logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     padding: 8px 16px;
-    background-color: #dc3545;
-    color: white;
+    background-color: #f2423c; /* Bootstrap-style red */
+    color: #ffffff; /* White text */
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 6px;
     font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
 }
 
 .logout-btn:hover {
-    background-color: #c82333;
+    background-color: #c9302c; /* Darker red for hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(217, 83, 79, 0.3);
 }
 
-.container {
-    max-width: 600px;
-    margin: 100px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+.logout-btn .material-symbols-outlined {
+    font-size: 18px;
+    color: #ffffff; /* Ensure icon stays white */
 }
 
-h1 {
-    color: #333;
+/* Main content section */
+section.home-content {
+    margin: 100px auto 40px;
+    width: 95%;
+    max-width: 1400px;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border: 2px solid #f7d6a6;
 }
 
-p {
-    color: #666;
+section .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
 }
 
-.buttons {
+section .content h1 {
+    font-size: 2.4em;
+    color: #1a1158;
+    font-weight: 600;
+    text-align: center;
+}
+
+.tagline {
+    color: #666666;
+    text-align: center;
+    font-size: 1.2em;
+    max-width: 800px;
+    line-height: 1.5;
+    margin-bottom: 0px;
+}
+
+/* Features section */
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
     margin-top: 20px;
 }
 
+.feature-card {
+    flex: 1;
+    min-width: 230px;
+    max-width: 330px;
+    background: #f8f8ff;
+    padding: 25px 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e6e6f2;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card .material-symbols-outlined {
+    font-size: 48px;
+    color: #1a1158;
+    margin-bottom: 5px;
+}
+
+.feature-card h3 {
+    color: #1a1158;
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.feature-card p {
+    color: #666666;
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    height: 55px; /* Fixed height for description to align buttons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .btn {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 10px;
+    padding: 10px 18px;
+    background: #1a1158;
+    color: #f7d6a6;
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
     text-decoration: none;
-    color: white;
-    background-color: #007bff;
-    border-radius: 5px;
+    text-align: center;
+    margin-top: auto;
+    display: inline-block;
 }
 
 .btn:hover {
-    background-color: #0056b3;
+    background: #2a2175;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(26, 17, 88, 0.2);
+}
+
+.btn:active {
+    transform: translateY(0);
+    opacity: 0.9;
+}
+
+/* Footer styling */
+footer {
+    margin-top: auto;
+    padding: 20px;
+    text-align: center;
+    color: #666666;
+    font-size: 0.9em;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-top: 1px solid #f7d6a6;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+    .feature-card {
+        min-width: 200px;
+        padding: 20px 15px;
+    }
+    
+    .feature-card h3 {
+        font-size: 1.1em;
+    }
+    
+    .feature-card p {
+        font-size: 0.85em;
+    }
+}
+
+@media (max-width: 992px) {
+    .features {
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 15px;
+    }
+    
+    .feature-card {
+        flex: 0 0 auto;
+        width: 230px;
+    }
+}
+
+@media (max-width: 768px) {
+    section.home-content {
+        padding: 30px 20px;
+        margin-top: 80px;
+    }
+    
+    section .content h1 {
+        font-size: 1.8em;
+    }
+    
+    .tagline {
+        font-size: 1em;
+    }
+    
+    header {
+        padding: 15px 20px;
+    }
+    
+    .feature-card {
+        width: 200px;
+    }
+    
+    .feature-card .material-symbols-outlined {
+        font-size: 40px;
+    }
+    
+    .btn {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 576px) {
+    .feature-card {
+        width: 180px;
+        min-width: 180px;
+    }
 }

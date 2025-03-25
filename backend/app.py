@@ -25,6 +25,7 @@ mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
 users_collection = mongo.db.users  
 uploads_collection = mongo.db.uploads
+outfits_collection = mongo.db.outfits
 
 # Folder for uploaded images
 UPLOAD_FOLDER = 'static/uploads'
@@ -112,6 +113,42 @@ def generator():
         return redirect(url_for("login_page"))
     return render_template("generator.html") 
 
+@app.route("/save_outfit", methods=["POST"])
+def save_outfit():
+    if "user" not in session:
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    # Get JSON data from request
+    data = request.get_json()
+    top_id = data.get("top_id")
+    bottom_id = data.get("bottom_id")
+    shoe_id = data.get("shoe_id")
+    
+    # Validate data
+    if not all([top_id, bottom_id, shoe_id]):
+        return jsonify({"success": False, "message": "Missing outfit items"}), 400
+        
+    # Get user information
+    user = users_collection.find_one({"username": session["user"]})
+    if not user:
+        return jsonify({"success": False, "message": "User not found"}), 404
+    
+    # Create new outfit entry
+    new_outfit = {
+        "outfit_id": str(uuid.uuid4()),
+        "user_id": user["_id"],
+        "top_id": top_id,
+        "bottom_id": bottom_id,
+        "shoe_id": shoe_id,
+        "created_at": datetime.utcnow().isoformat(),
+        "name": data.get("name", f"Outfit {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    }
+    
+    # Save to database
+    outfits_collection.insert_one(new_outfit)
+    
+    return jsonify({"success": True, "message": "Outfit saved successfully"})
+
 @app.route("/wardrobe")
 def wardrobe():
     if "user" not in session:
@@ -146,6 +183,7 @@ def get_wardrobe():
 
     for item in wardrobe_items:
         item_data = {
+            "id": item["item_id"],  # Include the item ID
             "image_url": f"/static/uploads/{item['filename']}",
             "category": item["category"]
         }
@@ -158,9 +196,117 @@ def get_wardrobe():
 
     return jsonify(wardrobe)
 
+# Add this route to your app.py file
+
+@app.route("/remove_wardrobe_item", methods=["POST"])
+def remove_wardrobe_item():
+    if "user" not in session:
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+        
+    data = request.get_json()
+    item_id = data.get("item_id")
+    
+    if not item_id:
+        return jsonify({"success": False, "message": "No item ID provided"}), 400
+        
+    user = users_collection.find_one({"username": session["user"]})
+    if not user:
+        return jsonify({"success": False, "message": "User not found"}), 404
+    
+    # First, find the item to get its filename for file deletion
+    item = uploads_collection.find_one({"item_id": item_id, "user_id": user["_id"]})
+    
+    if not item:
+        return jsonify({"success": False, "message": "Item not found or not authorized to delete"}), 404
+    
+    # Delete the item from the database
+    result = uploads_collection.delete_one({"item_id": item_id, "user_id": user["_id"]})
+    
+    if result.deleted_count > 0:
+        # Delete the physical file from the uploads folder
+        try:
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], item['filename'])
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            # Log the error but don't fail the request
+            print(f"Error deleting file: {e}")
+            
+        # Check if this item is part of any saved outfits
+        # Option 1: Delete outfits that contain this item
+        outfits_collection.delete_many({
+            "user_id": user["_id"],
+            "$or": [
+                {"top_id": item_id},
+                {"bottom_id": item_id},
+                {"shoe_id": item_id}
+            ]
+        })
+        
+        # Alternatively, you could mark outfits as having missing items instead of deleting them
+        
+        return jsonify({"success": True, "message": "Item deleted successfully"})
+    else:
+        return jsonify({"success": False, "message": "Failed to delete item"}), 500
+
 @app.route("/signup")
 def signup():
     return render_template("signup.html")  
+
+@app.route("/saved_outfits")
+def saved_outfits():
+    if "user" not in session:
+        return redirect(url_for("login_page"))
+        
+    user = users_collection.find_one({"username": session["user"]})
+    if not user:
+        return redirect(url_for("login_page"))
+    
+    # Get all saved outfits for the user
+    saved_outfits = list(outfits_collection.find({"user_id": user["_id"]}))
+    
+    # Build detailed outfit data including image URLs
+    outfits_data = []
+    for outfit in saved_outfits:
+        top = uploads_collection.find_one({"item_id": outfit["top_id"]})
+        bottom = uploads_collection.find_one({"item_id": outfit["bottom_id"]})
+        shoe = uploads_collection.find_one({"item_id": outfit["shoe_id"]})
+        
+        if top and bottom and shoe:
+            outfit_data = {
+                "outfit_id": outfit["outfit_id"],
+                "name": outfit["name"],
+                "created_at": outfit["created_at"],
+                "top_image": f"/static/uploads/{top['filename']}",
+                "bottom_image": f"/static/uploads/{bottom['filename']}",
+                "shoe_image": f"/static/uploads/{shoe['filename']}"
+            }
+            outfits_data.append(outfit_data)
+    
+    return render_template("saved_outfits.html", outfits=outfits_data)
+
+@app.route("/delete_outfit", methods=["POST"])
+def delete_outfit():
+    if "user" not in session:
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+        
+    data = request.get_json()
+    outfit_id = data.get("outfit_id")
+    
+    if not outfit_id:
+        return jsonify({"success": False, "message": "No outfit ID provided"}), 400
+        
+    user = users_collection.find_one({"username": session["user"]})
+    if not user:
+        return jsonify({"success": False, "message": "User not found"}), 404
+        
+    # Delete the outfit, ensuring it belongs to the current user
+    result = outfits_collection.delete_one({"outfit_id": outfit_id, "user_id": user["_id"]})
+    
+    if result.deleted_count > 0:
+        return jsonify({"success": True, "message": "Outfit deleted successfully"})
+    else:
+        return jsonify({"success": False, "message": "Outfit not found or not authorized to delete"}), 404
 
 # Image upload handler (POST request)
 @app.route("/upload", methods=["POST"])

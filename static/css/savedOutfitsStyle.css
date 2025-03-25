@@ -1,0 +1,344 @@
+/* Saved Outfits Page Styling - extends homeStyle.css */
+
+.outfits-content {
+    margin: 100px auto 40px;
+    width: 90%;
+    max-width: 1200px;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border: 2px solid #f7d6a6;
+}
+
+.subtitle {
+    color: #666666;
+    text-align: center;
+    font-size: 1.2em;
+    max-width: 800px;
+    line-height: 1.5;
+    margin: 0 auto 30px;
+    margin-bottom: 10px;
+}
+
+.outfits-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+}
+
+.outfit-card {
+    flex: 1;
+    min-width: 280px;
+    max-width: 350px;
+    background: #f8f8ff;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e6e6f2;
+}
+
+.outfit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+}
+
+.outfit-card h3 {
+    color: #1a1158;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.outfit-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.outfit-item {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item-label {
+    background-color: #1a1158;
+    color: #f7d6a6;
+    padding: 5px 15px;
+    border-radius: 15px;
+    position: relative;
+    top: 10px;
+    z-index: 10;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.outfit-item img {
+    max-width: 200px;
+    max-height: 200px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid #f0f0f0;
+    background-color: white;
+    object-fit: cover;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.outfit-item img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+.outfit-actions {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Navigation styling */
+nav {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background-color: #1a1158;
+    color: #f7d6a6;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background-color: #2a2175;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(26, 17, 88, 0.2);
+}
+
+.nav-btn .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* Active state for navigation buttons */
+.nav-btn.active {
+    background-color: #2a2175;
+    box-shadow: inset 0 -3px 0 #f7d6a6;
+    transform: translateY(0);
+}
+
+.nav-btn.active:hover {
+    background-color: #332680;
+    transform: translateY(0);
+}
+
+.logout-btn {
+    background-color: #f2423c;
+    color: #ffffff;
+}
+
+.logout-btn:hover {
+    background-color: #c9302c;
+    box-shadow: 0 4px 8px rgba(217, 83, 79, 0.3);
+}
+
+.logout-btn .material-symbols-outlined {
+    color: #ffffff;
+}
+
+.delete-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background-color: #f2423c;
+    color: #ffffff;
+    font-size: 14px;
+    border-radius: 6px;
+}
+
+.delete-btn:hover {
+    background-color: #c9302c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(217, 83, 79, 0.3);
+}
+
+.delete-btn .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.no-outfits {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+    padding: 40px;
+    background: #f8f8ff;
+    border-radius: 16px;
+    border: 1px solid #e6e6f2;
+    width: 100%;
+    max-width: 600px;
+}
+
+.no-outfits .material-symbols-outlined {
+    font-size: 48px;
+    color: #1a1158;
+}
+
+.no-outfits p {
+    color: #666666;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+.no-outfits .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Image enlargement modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow: hidden;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+    from {transform: scale(0.8); opacity: 0;}
+    to {transform: scale(1); opacity: 1;}
+}
+
+.modal-image {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: #1a1158;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    z-index: 10;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+}
+
+.close-modal:hover {
+    color: #f2423c;
+}
+
+.item-details {
+    margin-top: 15px;
+    color: #333;
+    text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .outfits-content {
+        padding: 30px 20px;
+        margin-top: 80px;
+    }
+    
+    .subtitle {
+        font-size: 1em;
+    }
+    
+    header {
+        padding: 15px 20px;
+    }
+    
+    nav {
+        gap: 8px;
+    }
+    
+    .nav-btn, .logout-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .modal-content {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .outfit-item {
+        max-width: 250px;
+    }
+}
