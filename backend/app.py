@@ -196,59 +196,6 @@ def get_wardrobe():
 
     return jsonify(wardrobe)
 
-# Add this route to your app.py file
-
-@app.route("/remove_wardrobe_item", methods=["POST"])
-def remove_wardrobe_item():
-    if "user" not in session:
-        return jsonify({"success": False, "message": "Unauthorized"}), 401
-        
-    data = request.get_json()
-    item_id = data.get("item_id")
-    
-    if not item_id:
-        return jsonify({"success": False, "message": "No item ID provided"}), 400
-        
-    user = users_collection.find_one({"username": session["user"]})
-    if not user:
-        return jsonify({"success": False, "message": "User not found"}), 404
-    
-    # First, find the item to get its filename for file deletion
-    item = uploads_collection.find_one({"item_id": item_id, "user_id": user["_id"]})
-    
-    if not item:
-        return jsonify({"success": False, "message": "Item not found or not authorized to delete"}), 404
-    
-    # Delete the item from the database
-    result = uploads_collection.delete_one({"item_id": item_id, "user_id": user["_id"]})
-    
-    if result.deleted_count > 0:
-        # Delete the physical file from the uploads folder
-        try:
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], item['filename'])
-            if os.path.exists(file_path):
-                os.remove(file_path)
-        except Exception as e:
-            # Log the error but don't fail the request
-            print(f"Error deleting file: {e}")
-            
-        # Check if this item is part of any saved outfits
-        # Option 1: Delete outfits that contain this item
-        outfits_collection.delete_many({
-            "user_id": user["_id"],
-            "$or": [
-                {"top_id": item_id},
-                {"bottom_id": item_id},
-                {"shoe_id": item_id}
-            ]
-        })
-        
-        # Alternatively, you could mark outfits as having missing items instead of deleting them
-        
-        return jsonify({"success": True, "message": "Item deleted successfully"})
-    else:
-        return jsonify({"success": False, "message": "Failed to delete item"}), 500
-
 @app.route("/signup")
 def signup():
     return render_template("signup.html")  
@@ -350,6 +297,59 @@ def upload_image():
     else:
         return jsonify({"message": "Invalid file type. Only .png, .jpg, .jpeg are allowed."}), 400
 
+@app.route("/remove_item/<item_id>", methods=["POST"])
+def remove_item(item_id):
+    if "user" not in session:
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+    
+    user = users_collection.find_one({"username": session["user"]})
+    if not user:
+        return jsonify({"success": False, "message": "User not found"}), 404
+    
+    # Find the item to get the filename
+    item = uploads_collection.find_one({"item_id": item_id, "user_id": user["_id"]})
+    if not item:
+        return jsonify({"success": False, "message": "Item not found or not authorized to delete"}), 404
+    
+    # Delete the item from the database
+    result = uploads_collection.delete_one({"item_id": item_id, "user_id": user["_id"]})
+    
+    if result.deleted_count > 0:
+        # Remove the file from the filesystem
+        try:
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], item['filename'])
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            # Continue even if file deletion fails (file might not exist)
+            print(f"Error deleting file: {e}")
+        
+        # Also remove the item from any saved outfits
+        outfits_to_delete = []
+        
+        # Find outfits containing this item
+        outfits = outfits_collection.find({
+            "$or": [
+                {"top_id": item_id},
+                {"bottom_id": item_id},
+                {"shoe_id": item_id}
+            ],
+            "user_id": user["_id"]
+        })
+        
+        for outfit in outfits:
+            outfits_to_delete.append(outfit["outfit_id"])
+        
+        # Delete identified outfits
+        if outfits_to_delete:
+            outfits_collection.delete_many({
+                "outfit_id": {"$in": outfits_to_delete},
+                "user_id": user["_id"]
+            })
+        
+        return jsonify({"success": True, "message": "Item deleted successfully"})
+    else:
+        return jsonify({"success": False, "message": "Failed to delete item"}), 500
+
 if __name__ == "__main__":
     app.run(debug=True)
-    

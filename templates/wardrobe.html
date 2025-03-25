@@ -63,7 +63,7 @@
             <div class="category" id="tops">
               {% for item in wardrobe_items if item.category == 'top' %}
               <div class="wardrobe-item" onclick="enlargeImage(this)">
-                <img src="{{ item.image_url }}" alt="Top" class="wardrobe-image" data-id="{{ item.id }}" data-category="top" />
+                <img src="{{ item.image_url }}" alt="Top" class="wardrobe-image" data-id="{{ item.item_id }}" data-category="top" />
                 {% if item.color or item.brand %}
                 <div class="item-info">
                   {% if item.color %}<span class="item-color">{{ item.color }}</span>{% endif %}
@@ -81,7 +81,7 @@
             <div class="category" id="bottoms">
               {% for item in wardrobe_items if item.category == 'bottom' %}
               <div class="wardrobe-item" onclick="enlargeImage(this)">
-                <img src="{{ item.image_url }}" alt="Bottom" class="wardrobe-image" data-id="{{ item.id }}" data-category="bottom" />
+                <img src="{{ item.image_url }}" alt="Bottom" class="wardrobe-image" data-id="{{ item.item_id }}" data-category="bottom" />
                 {% if item.color or item.brand %}
                 <div class="item-info">
                   {% if item.color %}<span class="item-color">{{ item.color }}</span>{% endif %}
@@ -99,7 +99,7 @@
             <div class="category" id="shoes">
               {% for item in wardrobe_items if item.category == 'shoes' %}
               <div class="wardrobe-item" onclick="enlargeImage(this)">
-                <img src="{{ item.image_url }}" alt="Shoes" class="wardrobe-image" data-id="{{ item.id }}" data-category="shoes" />
+                <img src="{{ item.image_url }}" alt="Shoes" class="wardrobe-image" data-id="{{ item.item_id }}" data-category="shoes" />
                 {% if item.color or item.brand %}
                 <div class="item-info">
                   {% if item.color %}<span class="item-color">{{ item.color }}</span>{% endif %}
@@ -191,18 +191,21 @@
       // Set up remove button functionality
       document.getElementById("removeItemBtn").addEventListener("click", function() {
         const itemId = this.getAttribute("data-id");
-        if (confirm("Are you sure you want to remove this item from your wardrobe?")) {
+        if (confirm("Are you sure you want to remove this item from your wardrobe? This will also remove any outfits that use this item.")) {
           // Send request to remove item
-          fetch(`/remove_wardrobe_item`, {
+          fetch(`/remove_item/${itemId}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              item_id: itemId
-            })
+              'X-Requested-With': 'XMLHttpRequest'
+            }
           })
-          .then(response => response.json())
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
           .then(data => {
             if (data.success) {
               // Close modal and refresh page to update wardrobe display
