@@ -139,6 +139,99 @@ section .content h1 {
     gap: 30px;
 }
 
+/* Generator options styles */
+.generator-options {
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: #f8f8ff;
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid #d0d0e8;
+}
+
+.option-label {
+    font-weight: 600;
+    color: #1a1158;
+    margin-bottom: 8px;
+}
+
+.options-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.option-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    background-color: #f0f0f8;
+    border: 1px solid #d0d0e8;
+    border-radius: 8px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.option-btn:hover {
+    background-color: #e8e8f0;
+}
+
+.option-btn.active {
+    background-color: #1a1158;
+    color: #f7d6a6;
+    border-color: #1a1158;
+}
+
+.option-btn input[type="radio"] {
+    display: none;
+}
+
+/* Color option explanation */
+.option-explanation {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 15px;
+    background-color: rgba(26, 17, 88, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.option-explanation .material-symbols-outlined {
+    font-size: 20px;
+    color: #581111;
+    margin-top: 3px;
+}
+
+.option-explanation p {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Coordination badge */
+.coordination-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #1a1158;
+    color: #f7d6a6;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin-bottom: 15px;
+    align-self: center;
+}
+
+.coordination-badge .material-symbols-outlined {
+    font-size: 16px;
+}
+
 /* Button styling */
 .btn {
     display: flex;
@@ -173,10 +266,11 @@ section .content h1 {
     width: auto;
     font-size: 1.1em;
     padding: 14px 30px;
+    margin-top: -15px;
 }
 
 .save-btn {
-    margin-top: 20px;
+    margin-top: 50px;
     background-color: #4caf50;
     color: white;
 }
@@ -236,6 +330,7 @@ section .content h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: -25px;
 }
 
 .item-label {
@@ -267,6 +362,98 @@ section .content h1 {
 .outfit-item img:hover {
     transform: scale(1.05); /* Slightly scale up on hover */
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Color chips in modal */
+.colors-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+    justify-content: center;
+}
+
+.color-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.color-sample {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+}
+
+.color-chip span {
+    font-size: 0.8em;
+    color: #666;
+    text-transform: capitalize;
+}
+
+/* Random color chip styling */
+.random-color-chip {
+    background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #ddd;
+  }
+  
+  .random-color-chip:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0));
+    z-index: 1;
+  }
+  
+  .random-color-chip .color-name {
+    position: relative;
+    z-index: 2;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-weight: 700;
+    padding: 4px 0;
+  }
+  
+  /* Use the same selected style as other chips */
+  .random-color-chip.selected {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 3px #1a1158;
+  }
+  
+  /* Random color coordination badge */
+  .coordination-badge[style*="random"] {
+    background: linear-gradient(45deg, #1a1158, #2a2175);
+  }
+  
+  .coordination-badge[style*="random"] .color-dot {
+    background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+  }
+
+/* Loading spinner */
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 30px;
+    color: #1a1158;
+}
+
+.spinning {
+    animation: spin 1.5s linear infinite;
+    font-size: 40px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Image enlargement modal */
@@ -374,6 +561,423 @@ footer {
     font-size: 0.9em;
     background-color: rgba(255, 255, 255, 0.7);
     border-top: 1px solid #f7d6a6;
+}
+
+/* Color selection for generator */
+.color-selection-container {
+    margin-top: 20px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid #d0d0e8;
+}
+
+.color-selection-label {
+    font-weight: 600;
+    color: #1a1158;
+    margin-bottom: 12px;
+    font-size: 0.95em;
+}
+
+.color-palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.color-chip {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.color-chip:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.color-chip.selected {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 3px #1a1158;
+}
+
+.color-name {
+    background-color: rgba(255, 255, 255, 0.8);
+    width: 100%;
+    text-align: center;
+    padding: 3px 0;
+    font-size: 0.8em;
+    color: #1a1158;
+    font-weight: 600;
+}
+
+.color-selection-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #f8f8ff;
+    border-radius: 8px;
+    font-size: 0.9em;
+    color: #1a1158;
+}
+
+#selectedColorDisplay {
+    font-weight: 600;
+}
+
+.clear-btn {
+    padding: 5px 10px;
+    background-color: transparent;
+    color: #1a1158;
+    border: 1px solid #1a1158;
+    font-size: 0.8em;
+}
+
+.clear-btn:hover {
+    background-color: rgba(26, 17, 88, 0.1);
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.clear-btn .material-symbols-outlined {
+    font-size: 16px;
+}
+
+/* Coordination badge */
+.coordination-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #1a1158;
+    color: #f7d6a6;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin-bottom: 15px;
+    align-self: center;
+}
+
+.coordination-badge .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.coordination-badge .color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    margin-left: 3px;
+}
+
+.outfit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    width: 100%;
+    position: relative;
+}
+
+/* Occasion-based mode styling */
+.occasion-options {
+  margin-top: 10px;
+}
+
+.occasion-selection-container {
+  margin-top: 20px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  padding: 15px;
+  border: 1px solid #d0d0e8;
+}
+
+.occasion-selection-label {
+  font-weight: 600;
+  color: #1a1158;
+  margin-bottom: 12px;
+  font-size: 0.95em;
+}
+
+.occasion-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+  justify-content: center;
+}
+
+.occasion-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 80px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #d0d0e8;
+  background-color: #f8f8ff;
+  color: #1a1158;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  gap: 5px;
+}
+
+.occasion-btn:hover {
+  background-color: #f0f0f8;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.occasion-btn.selected {
+  background-color: #1a1158;
+  color: #f7d6a6;
+  border-color: #1a1158;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(26, 17, 88, 0.2);
+}
+
+.occasion-btn .material-symbols-outlined {
+  font-size: 24px;
+}
+
+.occasion-selection-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #f8f8ff;
+  border-radius: 8px;
+  font-size: 0.9em;
+  color: #1a1158;
+}
+
+#selectedOccasionDisplay {
+  font-weight: 600;
+}
+
+.coordination-badge.occasion-badge {
+  background: linear-gradient(135deg, #1a1158, #2a2175);
+  padding: 6px 12px;
+}
+
+/* Weather-based outfit styles */
+.weather-options {
+    margin-top: 10px;
+  }
+  
+  .weather-data-container {
+    margin-top: 20px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid #d0d0e8;
+  }
+  
+  .weather-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+    color: #1a1158;
+  }
+  
+  .weather-info {
+    padding: 10px;
+  }
+  
+  .weather-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .weather-header .material-symbols-outlined {
+    font-size: 48px;
+    color: #1a1158;
+  }
+  
+  .weather-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .location {
+    font-weight: 600;
+    font-size: 1.2em;
+    color: #1a1158;
+  }
+  
+  .temperature {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #333;
+  }
+  
+  .conditions {
+    font-size: 1em;
+    color: #666;
+  }
+  
+  .weather-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    color: #d32f2f;
+    text-align: center;
+  }
+  
+  .weather-error .material-symbols-outlined {
+    font-size: 32px;
+  }
+  
+  .coordination-badge.weather-badge {
+    background: linear-gradient(135deg, #1a1158, #4a64b5);
+    color: white;
+    padding: 6px 12px;
+  }
+
+/* Weather-based mode styling */
+.weather-options {
+    margin-top: 10px;
+  }
+  
+  .weather-selection-container {
+    margin-top: 20px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid #d0d0e8;
+  }
+  
+  .weather-location-input {
+    margin-bottom: 15px;
+  }
+  
+  .weather-location-input label {
+    display: block;
+    font-weight: 600;
+    color: #1a1158;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+  }
+  
+  .input-with-button {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .input-with-button input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #d0d0e8;
+    border-radius: 6px;
+    font-size: 0.9em;
+  }
+  
+  .get-weather-btn {
+    padding: 10px;
+    min-width: auto;
+  }
+  
+  .weather-display {
+    margin-top: 15px;
+    background-color: #f8f8ff;
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid #d0d0e8;
+  }
+  
+  .weather-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .weather-icon {
+    font-size: 48px;
+    color: #1a1158;
+  }
+  
+  .weather-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .weather-location {
+    font-weight: 600;
+    color: #1a1158;
+    font-size: 1.1em;
+  }
+  
+  .weather-temperature {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #1a1158;
+  }
+  
+  .weather-description {
+    color: #666;
+    font-size: 0.9em;
+  }
+  
+  .coordination-badge.weather-badge {
+    background: linear-gradient(135deg, #1a1158, #4a71c4);
+  }
+  
+  /* Weather-specific styling for the outfit display */
+  .weather-outfit-info {
+    background-color: #f0f8ff;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #1a1158;
+    text-align: center;
+  }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .occasion-btn {
+    width: 100px;
+    height: 70px;
+    font-size: 0.9em;
+  }
+  
+  .occasion-btn .material-symbols-outlined {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .occasion-buttons {
+    justify-content: space-between;
+  }
+  
+  .occasion-btn {
+    width: 48%;
+    height: 60px;
+    font-size: 0.8em;
+  }
 }
 
 /* Responsive design */

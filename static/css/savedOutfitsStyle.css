@@ -204,10 +204,14 @@ nav {
     max-width: 600px;
 }
 
-.no-outfits .material-symbols-outlined {
+.no-outfits .material-symbols-outlined:first-child {
     font-size: 48px;
     color: #1a1158;
 }
+
+.no-outfits .btn .material-symbols-outlined {
+    color: #f7d6a6;
+  }
 
 .no-outfits p {
     color: #666666;

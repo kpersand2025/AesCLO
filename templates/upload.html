@@ -52,69 +52,59 @@
           Add images of your clothes to your virtual wardrobe.
         </p>
 
-        <!-- Display success message if available -->
+        <!-- Display messages if available -->
         {% if success_message %}
-        <div class="alert alert-success">
-          <span class="material-symbols-outlined">check_circle</span>
+        <div id="successAlert" class="alert alert-success alert-animate">
+          <span class="material-symbols-outlined bounce">check_circle</span>
           <span>{{ success_message }}</span>
         </div>
         {% endif %}
 
+        {% if error_message %}
+        <div id="errorAlert" class="alert alert-error alert-animate">
+          <span class="material-symbols-outlined shake">error</span>
+          <span>{{ error_message }}</span>
+        </div>
+        {% endif %}
+
         <div class="upload-container">
-          <!-- Preview panel -->
-          <div class="preview-panel">
+          <!-- Preview panel with drag and drop capability -->
+          <div class="preview-panel" id="dropZone">
             <div class="preview-placeholder" id="previewPlaceholder">
-              <span class="material-symbols-outlined">image</span>
-              <p>Image preview will appear here</p>
+              <span class="material-symbols-outlined" style="font-size: 48px;">image</span>
+              <p>Drag & drop an image here or click the button below</p>
             </div>
-            <img
-              id="previewImage"
-              src="#"
-              alt="Preview"
-              style="display: none"
-            />
+            <img id="previewImage" src="#" alt="Preview" style="display: none" />
             <p id="fileName" class="file-name" style="display: none"></p>
           </div>
-
-          <!-- Form panel -->
-          <div class="form-panel">
-            <form
-              id="uploadForm"
-              enctype="multipart/form-data"
-              method="POST"
-              action="{{ url_for('upload_page') }}"
-            >
-              <label for="fileInput" class="file-label">
-                <span class="material-symbols-outlined">cloud_upload</span>
-                Choose an Image
-              </label>
-              <input
-                type="file"
-                id="fileInput"
-                name="file"
-                accept="image/*"
-                required
-              />
-
-              <div class="form-group">
-                <label for="category">Category:</label>
-                <select id="category" name="category" required>
-                  <option value="" disabled selected>Select a category</option>
-                  <option value="top">Top</option>
-                  <option value="bottom">Bottom</option>
-                  <option value="shoes">Shoes</option>
-                </select>
-              </div>
-
-              <button type="submit" class="btn upload-btn">
-                <span class="material-symbols-outlined"
-                  >add_photo_alternate</span
-                >
-                Upload to Wardrobe
-              </button>
-            </form>
-          </div>
         </div>
+        
+        <!-- Form BELOW the preview panel -->
+        <div class="form-panel">
+          <form
+            id="uploadForm"
+            enctype="multipart/form-data"
+            method="POST"
+            action="{{ url_for('upload_image') }}"
+          >
+            <label for="fileInput" class="file-label">
+              <span class="material-symbols-outlined">upload_file</span>
+              Choose an Image
+            </label>
+            <input
+              type="file"
+              id="fileInput"
+              name="file"
+              accept="image/*"
+              required
+            />
+        
+            <button type="submit" class="btn upload-btn">
+              <span class="material-symbols-outlined">checkroom</span>
+              Upload to Wardrobe
+            </button>
+          </form>
+        </div>        
       </div>
     </section>
 
@@ -122,28 +112,128 @@
       <p>&copy; 2025 AesCLO - Your Personal Wardrobe Assistant</p>
     </footer>
 
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+      <div class="spinner"></div>
+      <p>Analyzing your clothing with AI...</p>
+    </div>
+
     <script>
+      // Auto-hide alert messages after 10 seconds
+      document.addEventListener('DOMContentLoaded', function() {
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+        
+        function hideAlert(alertElement) {
+          if (alertElement) {
+            setTimeout(function() {
+              // Add the hiding class that reverses the animation
+              alertElement.classList.add('alert-hide');
+              // After the animation completes, remove the element from the layout
+              setTimeout(function() {
+                alertElement.style.display = 'none';
+              }, 600); // Match animation duration
+            }, 10000); // 10 seconds delay before hiding
+          }
+        }
+        
+        hideAlert(successAlert);
+        hideAlert(errorAlert);
+      });
+
+      // File input preview
       document
         .getElementById("fileInput")
         .addEventListener("change", function (event) {
-          const file = event.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-              const previewImage = document.getElementById("previewImage");
-              const fileName = document.getElementById("fileName");
-              const placeholder = document.getElementById("previewPlaceholder");
-
-              previewImage.src = e.target.result;
-              previewImage.style.display = "block";
-              placeholder.style.display = "none";
-
-              fileName.textContent = file.name;
-              fileName.style.display = "block";
-            };
-            reader.readAsDataURL(file);
-          }
+          handleFileSelect(event.target.files[0]);
         });
+
+      // Function to handle file selection (used by both input and drag/drop)
+      function handleFileSelect(file) {
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const previewImage = document.getElementById("previewImage");
+            const fileName = document.getElementById("fileName");
+            const placeholder = document.getElementById("previewPlaceholder");
+
+            previewImage.src = e.target.result;
+            previewImage.style.display = "block";
+            placeholder.style.display = "none";
+
+            fileName.textContent = file.name;
+            fileName.style.display = "block";
+            
+            // Update the file input with the dropped file
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            document.getElementById("fileInput").files = dataTransfer.files;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // Form submission with loading overlay
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", function (event) {
+          // Check if a file has been selected
+          if (document.getElementById("fileInput").files.length === 0) {
+            event.preventDefault();
+            alert("Please select an image file.");
+            return false;
+          }
+          
+          // Show loading overlay when form is submitted
+          document.getElementById("loadingOverlay").style.display = "flex";
+        });
+
+      // Drag and drop functionality
+      const dropZone = document.getElementById("dropZone");
+      
+      // Prevent default behavior for drag events
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      // Highlight drop zone when item is dragged over it
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight() {
+        dropZone.classList.add('highlight');
+      }
+      
+      function unhighlight() {
+        dropZone.classList.remove('highlight');
+      }
+      
+      // Handle dropped files
+      dropZone.addEventListener('drop', handleDrop, false);
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length > 0) {
+          // Check if the file is an image
+          const file = files[0];
+          if (file.type.startsWith('image/')) {
+            handleFileSelect(file);
+          } else {
+            alert("Please drop an image file.");
+          }
+        }
+      }
     </script>
   </body>
 </html>

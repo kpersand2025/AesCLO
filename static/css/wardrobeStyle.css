@@ -101,8 +101,8 @@ nav {
 /* Main content section */
 section.wardrobe-content {
     margin: 100px auto 40px;
-    width: 90%;
-    max-width: 1000px;
+    width: 85%;
+    max-width: 875px;
     background: #ffffff;
     padding: 40px;
     border-radius: 20px;
@@ -243,14 +243,32 @@ section .content h1 {
     opacity: 0.9;
 }
 
-
-
 .remove-btn {
     background-color: #f44336;
     color: white;
 }
 
 .remove-btn:hover {
+    background-color: #d32f2f;
+    box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+}
+
+/* Clear wardrobe button styling */
+.wardrobe-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: -50px;
+}
+
+.clear-wardrobe-btn {
+    background-color: #f44336;
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.clear-wardrobe-btn:hover {
     background-color: #d32f2f;
     box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
 }
@@ -371,6 +389,20 @@ footer {
     border-top: 1px solid #f7d6a6;
 }
 
+/* Empty state for categories */
+.category:empty::after {
+    content: "No items yet";
+    display: block;
+    width: 100%;
+    padding: 30px;
+    text-align: center;
+    background-color: #f8f8ff;
+    border-radius: 12px;
+    border: 1px dashed #d0d0e8;
+    color: #8c84c6;
+    font-style: italic;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     section.wardrobe-content {
@@ -397,6 +429,15 @@ footer {
     
     .modal-content {
         max-width: 90%;
+    }
+    
+    .wardrobe-actions {
+        justify-content: center;
+    }
+    
+    .clear-wardrobe-btn {
+        width: 100%;
+        max-width: 250px;
     }
 }
 

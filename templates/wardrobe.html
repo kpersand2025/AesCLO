@@ -55,6 +55,13 @@
         <p class="subtitle">
           Here are the clothes you have uploaded, categorized by type.
         </p>
+        
+        <div class="wardrobe-actions">
+          <button id="clearWardrobeBtn" class="btn clear-wardrobe-btn">
+            <span class="material-symbols-outlined">delete_sweep</span>
+            Clear Wardrobe
+          </button>
+        </div>
 
         <div class="wardrobe-container">
           <!-- Tops Section -->
@@ -218,6 +225,38 @@
           .catch(error => {
             console.error("Error removing item:", error);
             alert("Failed to remove item. Please try again.");
+          });
+        }
+      });
+      
+      // Set up clear wardrobe button functionality
+      document.getElementById("clearWardrobeBtn").addEventListener("click", function() {
+        if (confirm("Are you sure you want to clear your entire wardrobe? This will remove ALL clothing items and any outfits that use them. This action cannot be undone.")) {
+          // Send request to clear wardrobe
+          fetch('/clear_wardrobe', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (data.success) {
+              // Reload page to show empty wardrobe
+              window.location.reload();
+            } else {
+              alert("Error clearing wardrobe: " + data.message);
+            }
+          })
+          .catch(error => {
+            console.error("Error clearing wardrobe:", error);
+            alert("Failed to clear wardrobe. Please try again.");
           });
         }
       });
