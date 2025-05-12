@@ -1,4 +1,4 @@
-# utils/outfit_generator.py - Improved color coordination while keeping all original functions
+# utils/outfit_generator.py
 import random
 from utils.color_utils import calculate_color_match_score, is_neutral_color, get_matching_colors
 
@@ -36,7 +36,7 @@ def is_item_neutral_color(item):
     neutral_colors = ["black", "white", "gray", "beige", "brown"]
     
     if 'colors' in item and item['colors'] and len(item['colors']) > 0:
-        # Check all detected colors (up to 3)
+        # Check all detected colors
         for color_data in item['colors']:
             color_name = color_data['name'].lower()
             # If any non-neutral color is found, return False
@@ -47,7 +47,6 @@ def is_item_neutral_color(item):
     
     return False
 
-# Add this new function - it's not in your original file but used in the weather_outfit_generator.py
 def filter_shoes_by_color_match(top, shoes):
     """
     Filter shoes to include those that match any of the top's colors, complement the top's colors,
@@ -333,7 +332,7 @@ def generate_color_coordinated_outfit(tops, bottoms, shoes, base_color=None):
             if not temp_matching_shoes:
                 temp_matching_shoes = occasion_matching_shoes
             
-            # *** IMPROVED SHOE SELECTION: Group shoes by color matching with top ***
+            # Group shoes by color matching with top
             # Group 1: Shoes with the same dominant color as the top
             same_color_shoes = []
             # Group 2: Shoes with neutral dominant colors
@@ -362,7 +361,7 @@ def generate_color_coordinated_outfit(tops, bottoms, shoes, base_color=None):
                 else:
                     other_shoes.append(shoe)
             
-            # *** IMPROVED: Select shoes with weighted probability ***
+            # Select shoes with weighted probability
             # 60% chance for same color shoes
             # 30% chance for neutral shoes
             # 10% chance for complementary shoes
@@ -450,7 +449,7 @@ def generate_color_coordinated_outfit(tops, bottoms, shoes, base_color=None):
         if not temp_matching_bottoms:
             temp_matching_bottoms = occasion_matching_bottoms
             
-        # *** IMPROVED BOTTOM SELECTION: Only include bottoms with suitable colors ***
+        # Only include bottoms with suitable colors 
         # Filter bottoms to only include:
         # 1. Same color as top
         # 2. Neutral colors
@@ -554,7 +553,7 @@ def generate_color_coordinated_outfit(tops, bottoms, shoes, base_color=None):
         if not occasion_matching_shoes:
             occasion_matching_shoes = shoes
         
-        # Similarly, find common temperature ranges
+        # Find common temperature ranges
         top_temp_ranges = selected_top.get('temperature_range', [])
         bottom_temp_ranges = best_bottom.get('temperature_range', [])
         
@@ -585,7 +584,7 @@ def generate_color_coordinated_outfit(tops, bottoms, shoes, base_color=None):
         if not temp_matching_shoes:
             temp_matching_shoes = occasion_matching_shoes
             
-        # *** IMPROVED: Categorize shoes by color matching priority ***
+        # Categorize shoes by color matching priority
         # Group 1: Shoes with the same dominant color as the top (highest priority)
         same_as_top_shoes = []
         # Group 2: Shoes with the same dominant color as the bottom
@@ -616,7 +615,7 @@ def generate_color_coordinated_outfit(tops, bottoms, shoes, base_color=None):
             else:
                 other_shoes.append(shoe)
         
-        # *** IMPROVED: Select shoes with weighted probability ***
+        # Select shoes with weighted probability
         # 50% chance for same-as-top-color shoes (increased from original)
         # 20% chance for same-as-bottom-color shoes
         # 20% chance for neutral shoes
@@ -706,7 +705,6 @@ def generate_color_coordinated_outfit(tops, bottoms, shoes, base_color=None):
         
         return selected_top, best_bottom, best_shoe
     
-    # Default flow if no base color provided - similar to above but starting with a random top
     # Choose a random top and check if it's complete
     base_item = random.choice(tops)
     is_complete_top = base_item.get("subcategory") == "complete"
@@ -716,7 +714,6 @@ def generate_color_coordinated_outfit(tops, bottoms, shoes, base_color=None):
     
     if is_complete_top:
         # If it's a complete top, only select matching shoes
-        # Use the improved shoe selection logic we developed above
         
         # Find occasion-matching shoes
         occasion_matching_shoes = []
@@ -787,7 +784,7 @@ def generate_color_coordinated_outfit(tops, bottoms, shoes, base_color=None):
             shoe_dominant_color = get_item_dominant_color(shoe)
             color_bonus = 0
             if shoe_dominant_color == top_dominant_color:
-                color_bonus = 0.3  # Bonus for matching top color
+                color_bonus = 0.3 
             
             # Combine bonuses, capped at 70%
             total_bonus = min(0.7, occasion_bonus + temp_bonus + color_bonus)
@@ -881,9 +878,6 @@ def generate_color_coordinated_outfit(tops, bottoms, shoes, base_color=None):
         
         # Get bottom dominant color for shoe selection
         bottom_dominant_color = get_item_dominant_color(best_bottom)
-        
-        # Find shoes that match with both top and bottom
-        # Prioritize shoes matching top color
         
         # Group shoes by color matching priority
         same_as_top_shoes = []
@@ -1085,10 +1079,10 @@ def select_matching_items(base_item, item_list1, item_list2):
         # Calculate occasion match bonus - increased values
         occasion_bonus = 0
         if has_matching_occasion(base_item, item) and has_matching_occasion(best_item1, item):
-            # Bigger bonus if item matches occasion of BOTH base item and item1 (increased from 0.3 to 0.4)
+            # Bigger bonus if item matches occasion of BOTH base item and item1 
             occasion_bonus = 0.4
         elif has_matching_occasion(base_item, item) or has_matching_occasion(best_item1, item):
-            # Smaller bonus if item matches occasion of either base item or item1 (increased from 0.15 to 0.25)
+            # Smaller bonus if item matches occasion of either base item or item1
             occasion_bonus = 0.25
             
         # Calculate final score with occasion bonus
@@ -1098,7 +1092,7 @@ def select_matching_items(base_item, item_list1, item_list2):
     
     # Sort by score and get top matches
     scored_items2.sort(key=lambda x: x[1], reverse=True)
-    top_items2 = scored_items2[:min(3, len(scored_items2))]  # Using top 3 candidates
+    top_items2 = scored_items2[:min(3, len(scored_items2))] 
     
     if not top_items2:
         return best_item1, None
