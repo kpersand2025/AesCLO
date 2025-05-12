@@ -79,8 +79,8 @@ nav {
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    background-color: #f2423c; /* Bootstrap-style red */
-    color: #ffffff; /* White text */
+    background-color: #f2423c; 
+    color: #ffffff; 
     text-decoration: none;
     border-radius: 6px;
     font-size: 14px;
@@ -90,36 +90,35 @@ nav {
 }
 
 .logout-btn:hover {
-    background-color: #c9302c; /* Darker red for hover */
+    background-color: #c9302c; 
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(217, 83, 79, 0.3);
 }
 
 .logout-btn .material-symbols-outlined {
     font-size: 18px;
-    color: #ffffff; /* Ensure icon stays white */
+    color: #ffffff; 
 }
 
 /* Active state for navigation buttons */
 .nav-btn.active {
-    background-color: #2a2175; /* Slightly darker than regular background */
-    box-shadow: inset 0 -3px 0 #f7d6a6; /* Gold/cream underline */
-    transform: translateY(0); /* Keep it from floating on hover */
+    background-color: #2a2175; 
+    box-shadow: inset 0 -3px 0 #f7d6a6; 
+    transform: translateY(0); 
 }
   
-/* Make sure the active state persists when hovered */
 .nav-btn.active:hover {
-    background-color: #332680; /* Even darker on hover */
-    transform: translateY(0); /* Prevent the hover "lift" effect */
+    background-color: #332680; 
+    transform: translateY(0); 
 }
 
 /* Main content section */
 section.upload-content {
-    margin: 90px auto 40px; /* Reduced top margin from 100px to 90px */
+    margin: 90px auto 40px; 
     width: 90%;
     max-width: 800px;
     background: #ffffff;
-    padding: 35px 40px; /* Reduced top padding from 40px to 35px */
+    padding: 35px 40px; 
     border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
     border: 2px solid #f7d6a6;
@@ -129,7 +128,7 @@ section .content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px; /* Reduced from 25px to 20px */
+    gap: 20px; 
 }
 
 section .content h1 {
@@ -231,7 +230,7 @@ section .content h1 {
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
-    margin: 0 auto; /* Center it horizontally */
+    margin: 0 auto; 
 }
 
 /* Highlight effect for drag and drop */
@@ -304,9 +303,9 @@ section .content h1 {
 .form-panel {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center form elements */
+    align-items: center; 
     width: 100%;
-    margin-top: 15px; /* Add spacing to move buttons down */
+    margin-top: 15px; 
 }
 
 .form-group {
@@ -338,8 +337,8 @@ section .content h1 {
     margin-bottom: 15px;
     user-select: none;
     border: 2px solid #1a1158;
-    width: 400px; /* Match preview panel width */
-    max-width: 100%; /* Ensure responsiveness */
+    width: 400px; 
+    max-width: 100%; 
 }
 
 .file-label:hover {
@@ -412,9 +411,9 @@ select:focus {
 .upload-btn {
     background: #1a1158;
     color: #f7d6a6;
-    width: 400px; /* Match preview panel width */
-    max-width: 100%; /* Ensure responsiveness */
-    margin: 0 auto; /* Center it */
+    width: 400px; 
+    max-width: 100%; 
+    margin: 0 auto; 
 }
 
 .upload-btn:hover {
@@ -515,7 +514,7 @@ footer {
     }
     
     .file-label, .upload-btn {
-        width: 100%; /* Full width on smaller screens */
+        width: 100%; 
     }
 }
 
