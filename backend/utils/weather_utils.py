@@ -24,7 +24,7 @@ def get_weather_by_location(location, api_key):
             url = f"https://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}&units=imperial"
             
         response = requests.get(url)
-        response.raise_for_status()  # Raise exception for HTTP errors
+        response.raise_for_status()
         
         weather_data = response.json()
         
@@ -52,7 +52,7 @@ def get_weather_condition_by_id(weather_id):
     
     # Thunderstorm
     if 200 <= weather_id < 300:
-        return "rain"  # Simplify thunderstorm to rain
+        return "rain" 
     
     # Drizzle and Rain
     elif 300 <= weather_id < 600:
