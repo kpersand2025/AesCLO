@@ -63,7 +63,7 @@ def get_color_name(rgb):
     """
     Function to map RGB values to common color names that better match human perception.
     Takes an RGB tuple and returns a color name string.
-    Improved to better distinguish between red, pink, and orange colors.
+    Improved to better distinguish between red and pink based on human perception.
     """
     r, g, b = rgb
     
@@ -82,7 +82,21 @@ def get_color_name(rgb):
     if total < 60:  # Very dark colors are black regardless of blue dominance
         return "black"
     
-    # Step 3: Handle grayscale colors with better gray/white/black distinction
+    # Special case for bright yellow colors
+    if r > 180 and g > 150 and b < 100 and r_ratio > 0.4 and g_ratio > 0.35 and b_ratio < 0.15:
+        if abs(r - g) < 80:  # Red and green should be fairly close for yellow
+            return "yellow"
+    
+    # Step 3: Special case for medium-dark navy blues
+    if b > r and b > g and 140 <= total <= 180:
+        if b > max(r, g) * 1.15:  # Only 15% blue dominance required in this range
+            return "navy"
+    
+    # Step 3b: Special case for dark navy blues (brightness between 60-80)
+    if total >= 60 and total < 80 and b > r and b > g and b > max(r, g) * 1.3:
+        return "navy"
+    
+    # Step 4: Handle grayscale colors with better gray/white/black distinction
     if abs(r - g) <= 15 and abs(r - b) <= 15 and abs(g - b) <= 15:
         if r < 50:  # Very dark grayscale colors are black
             return "black"
@@ -93,69 +107,7 @@ def get_color_name(rgb):
         else:
             return "white"  # Only very bright grays are "white"
     
-    # Special case for bright yellow colors
-    if r > 180 and g > 150 and b < 100 and r_ratio > 0.4 and g_ratio > 0.35 and b_ratio < 0.15:
-        if abs(r - g) < 80:  # Red and green should be fairly close for yellow
-            return "yellow"
-    
-    #---------- RED, PINK, ORANGE IMPROVED CATEGORIZATION ----------#
-    
-    # IMPROVED RED detection - Pure reds have high red value with low green and blue
-    if r > g and r > b:
-        # Pure red: Very high red, very low green and blue
-        if r > 160 and g < 90 and b < 90:
-            # Special case for darker reds/burgundy/maroon
-            if r < 200 and g < 60 and b < 60:
-                return "red"  # These are dark/deep reds
-                
-            # Regular reds - high red saturation, low green and blue
-            return "red"
-            
-        # ORANGE detection (high red, medium-high green, low blue)
-        # True orange should have significant green component but much less blue
-        if r > 180 and g > 90 and g/total > 0.25 and b < 90 and b/total < 0.2 and g > 1.7*b:
-            # First check for true oranges (high red, reasonable green, very low blue)
-            if r > g + 50 and g > b + 40:
-                return "orange"
-        
-        # Additional orange check for bright orange tones
-        if r > 220 and g > 120 and g < 180 and b < 60 and r > g and g > b*2:
-            return "orange"
-            
-        # IMPROVED PINK detection - high red with significant blue component
-        # True pinks should have a significant blue component relative to green
-        if r > 180:
-            # Light pinks/baby pinks: high red, high green, high blue, but red dominates
-            if g > 150 and b > 150 and r > g and r > b and b > 0.85*g:
-                return "pink"
-                
-            # Bright/hot pinks: high red, moderate green, higher blue
-            if g < 150 and b > 90 and b > g:
-                return "pink"
-                
-            # Rose/medium pinks: high red, moderate green and blue, where blue is significant
-            if g < 150 and b > 80 and b > 0.7*g:
-                return "pink"
-        
-        # Salmon/coral pinks (pinkish-orange): high red, medium green, lower blue
-        if r > 200 and 90 <= g <= 160 and 60 <= b <= 110 and r > g + 60 and g > b + 20:
-            if b > 75:  # Enough blue to be pinkish rather than orange
-                return "pink"
-            else:
-                return "orange"  # Lower blue makes it more orange
-    
-    #----- END OF RED, PINK, ORANGE SECTION -----#
-    
-    # Step 4: Special case for medium-dark navy blues
-    if b > r and b > g and 140 <= total <= 180:
-        if b > max(r, g) * 1.15:  # Only 15% blue dominance required in this range
-            return "navy"
-    
-    # Special case for dark navy blues (brightness between 60-80)
-    if total >= 60 and total < 80 and b > r and b > g and b > max(r, g) * 1.3:
-        return "navy"
-    
-    # Handle navy blue colors with more significant blue dominance
+    # Step 5: Handle navy blue colors with more significant blue dominance
     if b > r and b > g:  # Blue is dominant
         # For true navy, blue should be significantly higher than red and green
         if b <= 100 and r < 70 and g < 70:
@@ -166,68 +118,199 @@ def get_color_name(rgb):
     if 30 <= b <= 120 and r < 70 and g < 80 and b > max(r, g) * 1.25:
         return "navy"
     
-    # PURPLE detection: When red and blue are both relatively high, and green is lower
-    if b > 70 and r > 50 and g < r * 0.9 and g < b * 0.9:
-        # Check for specific purple cases
-        if (r > 50 and b > 100) or (b > r and b > 90 and g < 80):
-            # But don't classify as purple if the red is significantly higher than blue
-            if r <= b * 1.2:  # Less strict purple condition
-                return "purple"
+    # ============================================================================
+    # IMPROVED RED VS PINK DETECTION - Major changes for better human perception
+    # ============================================================================
+    
+    # RED vs PINK - Key differences in human perception:
+    # - True reds: High red, low to moderate green and blue (R >> G,B)
+    # - Pinks: High red, moderate to high green and blue (R > G,B but G,B are also high)
+    # - Pink is essentially light red - higher overall brightness with significant blue
+    
+    # Base case: When red is dominant (red > green and red > blue)
+    if r > g and r > b:
+        # CLEAR TRUE RED CASES
+        # Deep/pure reds: Very dominant red with low green and blue
+        if r > 160 and g < 90 and b < 90:
+            return "red"  # Deep/pure red
         
-        # Check for specific RGB values that should be purple
-        if (r in range(140, 180) and g in range(120, 160) and b in range(180, 230)):
-            # Only if red isn't too dominant
-            if r <= b:
-                return "purple"
+        # Traditional reds: Strong red with very low blue and green
+        if r > 120 and g < 90 and b < 90 and r > (g + b):
+            return "red"  # Traditional red
             
-        # Check for darker purples
-        if (r in range(50, 90) and g in range(40, 80) and b in range(100, 140)):
-            return "purple"
+        # Burgundy/maroon/ruby: Red dominant but darker overall
+        if r > 100 and r < 180 and g < 80 and b < 80 and r > (g + b) * 0.7:
+            return "red"  # Darker red tones (burgundy, maroon, ruby)
+            
+        # CLEAR PINK CASES
+        # Light pinks: High red, high green, high blue (overall bright)
+        if r > 200 and g > 150 and b > 150:
+            return "pink"  # Light pinks
+            
+        # Bright pinks: High red, medium green, medium-high blue
+        if r > 220 and 100 <= g <= 180 and 120 <= b <= 200:
+            return "pink"  # Bright pinks like hot pink
+            
+        # Medium pinks: Strong red with moderate green and blue
+        if r > 180 and 100 <= g <= 150 and 100 <= b <= 170 and b > g * 0.8:
+            return "pink"  # Medium pinks
+            
+        # Subtle pinks: Where red is strong but green and blue are also significant
+        if r > 180 and g > 120 and b > 120 and b > g * 0.8:
+            return "pink"  # Subtle pinks
         
-        # More general purple check
-        if abs(r - b) < 70 and b > g and r > g and r <= b * 1.2:
+        # EDGE CASES - Additional tests for better discrimination
+        
+        # Pinkish red or reddish pink - these are borderline cases
+        if r > 190 and 80 <= g <= 140 and 80 <= b <= 140:
+            # If blue is relatively high compared to green, it's more pink
+            # This captures how adding blue to red makes it more pink
+            if b > g * 1.1 or (b > 110 and g < 100):
+                return "pink"  # Pink has more blue relative to green
+            # If red is extremely dominant, it's still red
+            elif r > g * 2.2 and r > b * 2.2:
+                return "red"  # Still red because red is very dominant
+            # If green and blue are both quite low, it's red
+            elif g < 100 and b < 100:
+                return "red"
+            else:
+                return "pink"  # Default to pink in these midrange cases
+        
+        # Coral/salmon territory - often confused between red, pink and orange
+        if r > 200 and 120 <= g <= 170 and 90 <= b <= 140:
+            # If green is significantly higher than blue, it's more orange/coral
+            if g > b * 1.3:
+                return "orange"  # Coral/salmon territory
+            # If blue is relatively high, it's pink
+            elif b > g * 0.8:
+                return "pink"  # Pink-coral
+            else:
+                return "red"  # Red-coral
+                
+        # For remaining red-dominant colors
+        # If green and blue are very low, it's red
+        if g < 100 and b < 100:
+            return "red"
+        # If blue is relatively high compared to green, it leans pink
+        elif b > g * 0.9:
+            return "pink"
+        # If red is extremely dominant over both green and blue, it's red
+        elif r > g * 2 and r > b * 2:
+            return "red"
+        else:
+            # Default to red for remaining red-dominant colors
+            return "red"
+    
+    # Purple detection - when blue and red are both significant, and green is lower
+    if b > 70 and r > 70 and g < r * 0.9 and g < b * 0.9:
+        # Distinguish purples from pinks more clearly
+        if b > r * 1.2:  # Blue clearly dominates red
             return "purple"
-
-    # BROWN detection (improved)
+        elif r > b * 1.2:  # Red clearly dominates blue
+            if r > 160 and g < 120:  # High red makes this pinker
+                return "pink"
+            else:
+                return "purple"  # Reddish purple
+        # When red and blue are relatively balanced, it's purple
+        elif abs(r - b) < 30:
+            return "purple"
+    
+    # Define thresholds for color categories
+    high_threshold = 0.4
+    mid_threshold = 0.3
+    low_threshold = 0.2
+    very_low_threshold = 0.1
     
     # Special case for dark olive green / army green
     if (60 <= r <= 90) and (59 <= g <= 85) and (40 <= b <= 65) and r/g > 0.9 and r/g < 1.2:
         return "green"  # Dark olive/army green
     
-    # More precise case for brown colors with orangey tint
+    # Salmon pink and coral pink colors - these are distinct from red
+    if r > 200 and 100 <= g <= 160 and 100 <= b <= 160:
+        # Coral colors - more orange if green is higher than blue
+        if g > b * 1.3:
+            return "orange"  # Coral leans orange
+        return "pink"  # Pink-salmon otherwise
+    
+    # Brown colors with orangey tint
     if r > 150 and (70 <= g <= 150) and (30 <= b <= 70) and (r > g > b) and (r/b > 2.5):
         return "brown"  # These are definite browns with orangey tint
     
-    # Specific case for browns in the orange-brown territory
+    # More general case for brown with orangey tint
     if r > 150 and (90 <= g <= 160) and (40 <= b <= 90) and (r > g > b) and (g/b > 1.5):
-        # Only classify as brown if not too orangey (i.e., green not too high relative to red)
-        if g < r * 0.7:
-            return "brown"
+        return "brown"  # More general brown detection
     
-    # Brown hues (general case)
-    if r_ratio > 0.3 and g_ratio > 0.2 and g_ratio < 0.4 and b_ratio < 0.3:
-        if r > 120 and g > 60 and b < 80:
+    # Red hues with special case for reddish-brown / burgundy / maroon colors
+    if r_ratio > mid_threshold and r > g + 30 and r > b + 10:
+        # Reddish-purple / burgundy / maroon colors
+        if r > 75 and r > g * 1.8 and r > b * 1.5 and g < 100 and b < 100:
+            return "red"  # These are red colors with slight purple tint
+            
+        if r > 220 and g > 150:
+            # High red, green and blue = pink
+            if b > 150:
+                return "pink"
+            # High red and green, low blue = orange
+            elif g > 180 and b < 100:
+                return "orange"
+            # High red, medium green = red
+            else:
+                return "red"
+        # Pure red check
+        elif r > 160 and g < 80 and b < 80:
+            return "red"
+        # Burgundy/maroon still reads as red to most people
+        elif r > 140 and g > 60 and g < 110 and b < 100:
+            return "red"
+        # Red vs orange differentiation
+        elif r > 160 and g > 110 and b < 100:
+            return "orange" if g > 130 else "red"
+        else:
+            # For darker reds, check red dominance ratio
+            red_dominance = r / max(g, b) if max(g, b) > 0 else 2
+            return "red" if red_dominance > 1.8 else "brown"
+    
+    # Brown hues
+    if r_ratio > mid_threshold and g_ratio > low_threshold and g_ratio < high_threshold and b_ratio < mid_threshold:
+        if r > 180 and g > 140 and b < 100:
+            # Modified to categorize more orange-browns as brown
+            if r > g * 1.5 and g > b * 1.5:
+                return "brown"  # This should catch colors like RGB(213, 138, 66)
+            return "orange"
+        elif r > 120 and g > 60 and b < 80:  # Expanded brown range
             return "brown"
-        # Additional check for richer browns
+        elif r > 180 and g > 160 and b > 100:
+            return "beige" if g > 170 and b > 140 and r-b < 60 else "brown"
+        # Additional check for brown
         if r > g > b and r > 100 and g > 40 and b < 80:
             return "brown"
+        return "brown"
     
-    # YELLOW hues
-    if r_ratio > 0.3 and g_ratio > 0.3 and b_ratio < 0.25:
+    # Yellow hues
+    if r_ratio > mid_threshold and g_ratio > mid_threshold and b_ratio < mid_threshold:
         if r > 180 and g > 180 and b < 120:
             return "yellow"
+        elif r > 190 and g > 170 and b > 130:
+            # Modified beige check to not catch light pink colors
+            if r > g > b and r-b < 60:
+                return "beige"
+            # If red is significantly higher than blue, it's more pink
+            elif r - b > 60:
+                return "pink"
+            else:
+                return "beige"
         return "brown" if r < 150 else "yellow"
     
-    # GREEN hues
-    if g_ratio > 0.4 and r_ratio < 0.4 and b_ratio < 0.4:
+    # Green hues
+    if g_ratio > high_threshold and r_ratio < high_threshold and b_ratio < high_threshold:
         if g > 130:
             if r > 130 and b < 100:
                 return "green"  # Olive green
             return "green"
         return "green"
     
-    # BLUE/GREEN (teal/cyan/turquoise) colors
-    if g_ratio > 0.3 and b_ratio > 0.3 and r_ratio < 0.3:
+    # Teal/Cyan/Turquoise colors now classified as either blue or green
+    if g_ratio > mid_threshold and b_ratio > mid_threshold and r_ratio < mid_threshold:
         # Compare green and blue values to determine if it appears more blue or green to humans
         if g > b * 1.2:  # Green is significantly higher - appears more green
             return "green"
@@ -238,8 +321,8 @@ def get_color_name(rgb):
         else:  # Blue is equal or slightly higher
             return "blue"
     
-    # BLUE hues
-    if b_ratio > 0.4 and r_ratio < 0.4 and g_ratio < 0.4:
+    # Blue hues
+    if b_ratio > high_threshold and r_ratio < high_threshold and g_ratio < high_threshold:
         if b > 150:
             if r < 80 and g < 80:
                 return "navy" if b < 170 else "blue"
@@ -249,20 +332,44 @@ def get_color_name(rgb):
             return "navy"
         return "navy"
     
-    # BEIGE/TAN hues
+    # Improved Navy Detection - capturing blues with even slightly dominant blue channel
+    if b > r and b > g:
+        # Dark navy with slightly dominant blue
+        if b < 120 and max(r, g) < 100 and b > max(r, g) * 1.1:
+            return "navy"
+    
+    # Modified Beige/Tan hues - more specific to avoid catching light pinks
     if r > 180 and g > 150 and b > 120 and r > g > b:
-        # Ensure it's not a light pink by checking the red-blue difference
-        if r - b < 50:
-            return "beige"
+        # Pink-peach colors will have a significant difference between red and blue
+        if r - b > 50:
+            return "pink"  # For colors like RGB(225,189,178)
+        return "beige"  # For true beige colors
+    
+    # Handle other edge cases
+    if r > 190 and g > 170 and b > 140:
+        # Check for pink-ish colors
+        if r - b > 50:
+            return "pink"
+        return "beige"
     
     # Handle taupe/grayish-brown colors
     if r > g > b and 120 < r < 180 and 100 < g < 160 and 90 < b < 150:
         return "brown" 
     
+    # One more brown check for colors like RGB(175, 95, 32)
+    if r > 140 and 70 < g < 120 and 10 < b < 70 and r > g + 40 and g > b:
+        return "brown"
+    
     # Additional check for light grayish colors that aren't pure grayscale
     if abs(r - g) <= 20 and abs(r - b) <= 20 and abs(g - b) <= 20:
         if r > 160 and r < 230:  # Light gray range even with slight color tint
             return "gray"
+    
+    # Final check for navy - this catches any remaining dark blues that might be missed
+    if b > max(r, g) and b < 120 and r < 80 and g < 80:
+        blue_dominance = b / max(r, g) if max(r, g) > 0 else 2
+        if blue_dominance > 1.1:  # Blue is at least 10% higher
+            return "navy"
     
     # Fallback
     return "unknown"
