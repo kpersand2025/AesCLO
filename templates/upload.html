@@ -131,8 +131,8 @@
               // After the animation completes, remove the element from the layout
               setTimeout(function() {
                 alertElement.style.display = 'none';
-              }, 600); // Match animation duration
-            }, 10000); // 10 seconds delay before hiding
+              }, 600); 
+            }, 10000); 
           }
         }
         
@@ -147,7 +147,7 @@
           handleFileSelect(event.target.files[0]);
         });
 
-      // Function to handle file selection (used by both input and drag/drop)
+      // Function to handle file selection 
       function handleFileSelect(file) {
         if (file) {
           const reader = new FileReader();
