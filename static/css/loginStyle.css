@@ -12,16 +12,16 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #1a1158; /* Navy background */
+  background: #1a1158; 
 }
 
 section.signin {
   width: 400px;
-  background: #ffe6f0; /* Light Pink background instead of navy */
+  background: #ffe6f0; 
   padding: 40px;
-  border-radius: 25px; /* Rounded to match logo's oval shape */
+  border-radius: 25px; 
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-  border: 2px solid #f7d6a6; /* Keeping the gold/cream border */
+  border: 2px solid #f7d6a6; 
 }
 
 section .content {
@@ -41,7 +41,7 @@ section .content .logo {
 
 section .content h2 {
   font-size: 1.6em;
-  color: #1a1158; /* Navy text to complement logo */
+  color: #1a1158; 
   font-weight: 500;
 }
 
@@ -59,12 +59,12 @@ section .content .form .inputBox {
 
 section .content .form .inputBox input {
   width: 100%;
-  background: #f8f8ff; /* Very light lavender background */
-  border: 1px solid #d0d0e8; /* Light purple border */
+  background: #f8f8ff; 
+  border: 1px solid #d0d0e8; 
   outline: none;
   padding: 25px 10px 7.5px;
   border-radius: 6px;
-  color: #1a1158; /* Navy text to match theme */
+  color: #1a1158; 
   font-weight: 400;
   font-size: 1em;
   margin-right: 20px;
@@ -72,7 +72,7 @@ section .content .form .inputBox input {
 }
 
 section .content .form .inputBox input:focus {
-  border: 1px solid #1a1158; /* Navy border on focus */
+  border: 1px solid #1a1158; 
 }
 
 section .content .form .inputBox i {
@@ -81,7 +81,7 @@ section .content .form .inputBox i {
   top: 50%;
   transform: translateY(-50%);
   font-style: normal;
-  color: #8c84c6; /* Muted purple for placeholder */
+  color: #8c84c6; 
   pointer-events: none;
   transition: 0.3s;
 }
@@ -90,13 +90,13 @@ section .content .form .inputBox input:focus ~ i,
 section .content .form .inputBox input:valid ~ i {
   transform: translateY(-20px);
   font-size: 0.8em;
-  color: #1a1158; /* Navy for active labels */
+  color: #1a1158; 
 }
 
 section .content .form .inputBox input[type="submit"] {
   padding: 12px;
-  background: #1a1158; /* Navy button */
-  color: #f7d6a6; /* Gold/cream text */
+  background: #1a1158; 
+  color: #f7d6a6; 
   font-weight: 600;
   font-size: 1.2em;
   cursor: pointer;
@@ -107,7 +107,7 @@ section .content .form .inputBox input[type="submit"] {
 }
 
 section .content .form .inputBox input[type="submit"]:hover {
-  background: #2a2175; /* Slightly lighter navy on hover */
+  background: #2a2175; 
 }
 
 input[type="submit"]:active {
@@ -117,12 +117,12 @@ input[type="submit"]:active {
 section .content .create-account {
   margin-top: 5px;
   font-size: 0.9em;
-  color: #666666; /* Darker text for better readability */
+  color: #666666; 
   text-align: center;
 }
 
 section .content .create-account a {
-  color: #1a1158; /* Navy link */
+  color: #1a1158; 
   text-decoration: none;
   font-weight: 600;
 }
@@ -137,7 +137,7 @@ section .content .form .inputBox #toggle-password {
   top: 50%;
   transform: translateY(-50%);
   font-size: 0.9em;
-  color: #1a1158; /* Navy for toggle password */
+  color: #1a1158; 
   cursor: pointer;
   user-select: none;
   font-weight: 600;
@@ -149,7 +149,7 @@ section .content .form .inputBox #toggle-password:hover {
 
 /* Styling for the error message */
 #error-message {
-  color: #e53e65; /* Brighter red for errors against white background */
+  color: #e53e65; 
   font-size: 13px;
   margin-top: -10px;
   margin-bottom: -10px;
