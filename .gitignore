@@ -44,6 +44,3 @@ credentials/
 *.swp
 *.swo
 .DS_Store
-
-# Uploaded files (optional, depending on your storage strategy)
-# static/uploads/
