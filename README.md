@@ -12,7 +12,7 @@ AesCLO is a fashion-based web application designed to streamline outfit selectio
   - Upload and Categorize: Upload images of clothing items with automatic AI-powered categorization (tops, bottoms, shoes, accessories)
   - AI-Powered Detection: Automatic detection of dominant colors, suitable occasions, and weather suitability
   - Subcategory Classification: Identifies "complete" tops (dresses, jumpsuits) vs. standard tops, and accessory subcategories
-  - Availability Tracking: Mark items as unavailable/dirty to prevent them from being suggested in outfits
+  - Availability Tracking: Mark items as unavailable/dirty to inform user about the unavailabilty of an item
 
   Intelligent Outfit Generation
   
@@ -27,7 +27,7 @@ AesCLO is a fashion-based web application designed to streamline outfit selectio
   - Individual Item Details: View detailed information about each clothing item, including colors, occasions, and weather suitability
   - Image Preview: Enlarge and view clothing items individually
   - Context Menu: Right-click on items for quick actions (view details, mark as unavailable, remove)
-  - Responsive Design: Works seamlessly across desktop and mobile devices
+  - Responsive Design: Works seamlessly across desktop and laptops
 
 
 ### Technology Stack:
