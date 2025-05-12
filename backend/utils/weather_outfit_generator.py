@@ -38,24 +38,24 @@ def calculate_weather_tag_match_score(item1, item2, current_temp_range, weather_
     elif item1_temp_ranges and current_temp_range not in item1_temp_ranges:
         # If this item is only for cold and we're in hot weather
         if len(item1_temp_ranges) == 1 and item1_temp_ranges[0] == "cold" and current_temp_range == "hot":
-            score -= 0.5  # Increased from 0.4
+            score -= 0.5 
         # If this item is only for hot and we're in cold weather
         elif len(item1_temp_ranges) == 1 and item1_temp_ranges[0] == "hot" and current_temp_range == "cold":
-            score -= 0.5  # Increased from 0.4
+            score -= 0.5  
         # Adding penalty for cool-only items in hot weather
         elif len(item1_temp_ranges) == 1 and item1_temp_ranges[0] == "cool" and current_temp_range == "hot":
-            score -= 0.4  # Increased from 0.3
+            score -= 0.4  
             
     if item2_temp_ranges and current_temp_range not in item2_temp_ranges:
         # If this item is only for cold and we're in hot weather
         if len(item2_temp_ranges) == 1 and item2_temp_ranges[0] == "cold" and current_temp_range == "hot":
-            score -= 0.5  # Increased from 0.4
+            score -= 0.5  
         # If this item is only for hot and we're in cold weather
         elif len(item2_temp_ranges) == 1 and item2_temp_ranges[0] == "hot" and current_temp_range == "cold":
-            score -= 0.5  # Increased from 0.4
+            score -= 0.5 
         # Adding penalty for cool-only items in hot weather
         elif len(item2_temp_ranges) == 1 and item2_temp_ranges[0] == "cool" and current_temp_range == "hot":
-            score -= 0.4  # Increased from 0.3
+            score -= 0.4  
     
     # Check if both items have the same weather condition tag
     if has_weather_tag(item1, weather_condition) and has_weather_tag(item2, weather_condition):
@@ -65,7 +65,7 @@ def calculate_weather_tag_match_score(item1, item2, current_temp_range, weather_
     if has_temperature_range_tag(item1, current_temp_range) and has_temperature_range_tag(item2, current_temp_range):
         score += 0.3
     
-    # IMPROVED: Add a penalty for inappropriate items at extreme temperatures
+    # Add a penalty for inappropriate items at extreme temperatures
     if current_temp_range == "cold":
         # For cold weather, heavily penalize items that are ONLY tagged as warm or hot
         if (item1_temp_ranges and len(item1_temp_ranges) == 1 and 
@@ -76,11 +76,11 @@ def calculate_weather_tag_match_score(item1, item2, current_temp_range, weather_
             item2_temp_ranges[0] in ["warm", "hot"]):
             score -= 0.6
     
-    # Add occasion matching bonus - this helps ensure better occasion matching
+    # Add occasion matching bonus 
     if 'occasions' in item1 and item1['occasions'] and 'occasions' in item2 and item2['occasions']:
         common_occasions = set(item1['occasions']).intersection(set(item2['occasions']))
         if common_occasions:
-            score += 0.2  # Increased from implicit zero to emphasize occasion matching
+            score += 0.2  
     
     # Additional bonus if one item's tags complement the other (e.g., one is warm, one is water-resistant)
     complementary_tags = False
@@ -121,7 +121,6 @@ def filter_items_by_strict_temperature(items, current_temp_range, weather_condit
         return []
         
     # SPECIAL CASE: For hot temperatures when it's raining, use warm-weather rain gear
-    # This helps select hoodies and rain jackets even in hot weather
     if current_temp_range == "hot" and weather_condition == "rain":
         # Look specifically for rain-appropriate items in both hot and warm ranges
         rain_appropriate_items = []
@@ -132,7 +131,6 @@ def filter_items_by_strict_temperature(items, current_temp_range, weather_condit
                 # If item is a top like a hoodie or rain jacket, allow warm-range items
                 if item.get('category') == 'top':
                     # For tops, include both hot and warm items tagged for rain
-                    # This allows lighter hoodies and rain jackets to be selected
                     if 'temperature_range' in item and item['temperature_range']:
                         if "hot" in item['temperature_range'] or "warm" in item['temperature_range']:
                             rain_appropriate_items.append(item)
@@ -150,7 +148,7 @@ def filter_items_by_strict_temperature(items, current_temp_range, weather_condit
         
         # If we found rain-appropriate items, shuffle them and return
         if rain_appropriate_items:
-            random.shuffle(rain_appropriate_items)  # Shuffle to prevent first-added bias
+            random.shuffle(rain_appropriate_items)  
             return rain_appropriate_items
         # Otherwise, continue with normal filtering
     
@@ -179,13 +177,13 @@ def filter_items_by_strict_temperature(items, current_temp_range, weather_condit
                     else:
                         cold_items.append(item)
         
-        # Return cold-specific items (shuffled) or fall back to regular filtering if nothing found
+        # Return cold-specific items or fall back to regular filtering if nothing found
         if cold_items:
-            random.shuffle(cold_items)  # Shuffle to prevent first-added bias
+            random.shuffle(cold_items) 
             return cold_items
         else:
             result = filter_items_by_temperature_priority(items, current_temp_range, weather_condition)
-            random.shuffle(result)  # Shuffle the fallback results too
+            random.shuffle(result) 
             return result
     
     # For hot temperatures, be very strict about what's appropriate
@@ -201,11 +199,11 @@ def filter_items_by_strict_temperature(items, current_temp_range, weather_condit
                         hot_items.append(item)
         
         if hot_items:
-            random.shuffle(hot_items)  # Shuffle to prevent first-added bias
+            random.shuffle(hot_items) 
             return hot_items
         else:
             result = filter_items_by_temperature_priority(items, current_temp_range, weather_condition)
-            random.shuffle(result)  # Shuffle the fallback results too
+            random.shuffle(result)  
             return result
     
     # For warm temperatures, create a more balanced selection
@@ -220,7 +218,7 @@ def filter_items_by_strict_temperature(items, current_temp_range, weather_condit
         
         # If we have enough items (at least 3), shuffle and return this refined set
         if len(warm_items) >= 3:
-            random.shuffle(warm_items)  # Shuffle to prevent first-added bias
+            random.shuffle(warm_items) 
             return warm_items
             
         # Second pass: get items tagged for warm weather regardless of weather condition
@@ -229,13 +227,13 @@ def filter_items_by_strict_temperature(items, current_temp_range, weather_condit
                 if 'temperature_range' in item and item['temperature_range'] and "warm" in item['temperature_range']:
                     warm_items.append(item)
                     
-        # Return warm items (shuffled) or fall back to normal filtering
+        # Return warm items or fall back to normal filtering
         if warm_items:
-            random.shuffle(warm_items)  # Shuffle to prevent first-added bias
+            random.shuffle(warm_items)  
             return warm_items
         else:
             result = filter_items_by_temperature_priority(items, current_temp_range, weather_condition)
-            random.shuffle(result)  # Shuffle the fallback results too
+            random.shuffle(result)  
             return result
     
     # For cool temperatures, apply stricter filtering than before
@@ -256,11 +254,11 @@ def filter_items_by_strict_temperature(items, current_temp_range, weather_condit
         
         # Return cool-specific items (shuffled) or fall back to regular filtering if nothing found
         if cool_items:
-            random.shuffle(cool_items)  # Shuffle to prevent first-added bias
+            random.shuffle(cool_items)  
             return cool_items
         else:
             result = filter_items_by_temperature_priority(items, current_temp_range, weather_condition)
-            random.shuffle(result)  # Shuffle the fallback results too
+            random.shuffle(result)  
             return result
     
     # For other temperature ranges, use the normal filtering algorithm and shuffle the results
@@ -329,13 +327,13 @@ def filter_items_by_temperature_priority(items, current_temp_range, weather_cond
     
     # Return the highest priority matches we found (with shuffling for each category)
     if perfect_matches:
-        random.shuffle(perfect_matches)  # Shuffle to prevent first-added bias
+        random.shuffle(perfect_matches) 
         return perfect_matches
     elif temp_matches:
-        random.shuffle(temp_matches)  # Shuffle to prevent first-added bias
+        random.shuffle(temp_matches) 
         return temp_matches
     elif weather_matches:
-        random.shuffle(weather_matches)  # Shuffle to prevent first-added bias
+        random.shuffle(weather_matches) 
         return weather_matches
     else:
         # Fallback to check for any items that are simply not incompatible with current weather
@@ -346,10 +344,10 @@ def filter_items_by_temperature_priority(items, current_temp_range, weather_cond
                 compatible_items.append(item)
         
         if compatible_items:
-            random.shuffle(compatible_items)  # Shuffle to prevent first-added bias
+            random.shuffle(compatible_items) 
             return compatible_items
         else:
-            random.shuffle(items)  # Shuffle even the last resort items
+            random.shuffle(items)  
             return items
 
 def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_condition):
@@ -387,18 +385,17 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
     # Determine the current temperature range based on given temperature
     current_temp_range = get_temperature_range(temperature)
     
-    # SPECIAL CASE: Handle hot rainy conditions differently
+    # Handle hot rainy conditions differently
     # For hot temperatures when it's raining, we want to prefer warm-range rain items
     if current_temp_range == "hot" and weather_condition == "rain":
         using_adjusted_temp_range = True
-        filtering_temp_range = "warm"  # Use warm range for filtering
-        display_temp_range = current_temp_range  # But preserve original for display
+        filtering_temp_range = "warm"  
+        display_temp_range = current_temp_range 
     else:
         using_adjusted_temp_range = False
         filtering_temp_range = current_temp_range
     
-    # IMPROVED: Filter items appropriate for the weather using their tagged metadata with STRICTER filters
-    # These functions now shuffle results internally to prevent first-added bias
+    # Filter items appropriate for the weather using their tagged metadata with STRICTER filters
     weather_appropriate_tops = filter_items_by_strict_temperature(tops, filtering_temp_range, weather_condition)
     weather_appropriate_bottoms = filter_items_by_strict_temperature(bottoms, filtering_temp_range, weather_condition)
     weather_appropriate_shoes = filter_items_by_strict_temperature(shoes, filtering_temp_range, weather_condition)
@@ -418,21 +415,21 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
         weather_appropriate_tops = filter_items_by_temperature_priority(tops, current_temp_range, weather_condition)
         if not weather_appropriate_tops:  # If still nothing, use all tops
             weather_appropriate_tops = list(tops)
-            random.shuffle(weather_appropriate_tops)  # Shuffle to prevent first-added bias
+            random.shuffle(weather_appropriate_tops) 
     
     if not weather_appropriate_bottoms:
         weather_appropriate_bottoms = filter_items_by_temperature_priority(bottoms, current_temp_range, weather_condition)
         if not weather_appropriate_bottoms:  # If still nothing, use all bottoms
             weather_appropriate_bottoms = list(bottoms)
-            random.shuffle(weather_appropriate_bottoms)  # Shuffle to prevent first-added bias
+            random.shuffle(weather_appropriate_bottoms) 
     
     if not weather_appropriate_shoes:
         weather_appropriate_shoes = filter_items_by_temperature_priority(shoes, current_temp_range, weather_condition)
         if not weather_appropriate_shoes:  # If still nothing, use all shoes
             weather_appropriate_shoes = list(shoes)
-            random.shuffle(weather_appropriate_shoes)  # Shuffle to prevent first-added bias
+            random.shuffle(weather_appropriate_shoes)  
     
-    # IMPROVED: If temperature is hot, exclude items that are only for cool/cold temperatures
+    # If temperature is hot, exclude items that are only for cool/cold temperatures
     # BUT skip this check if we're in the hot+rain special case
     if current_temp_range == "hot" and not using_adjusted_temp_range:
         hot_appropriate_tops = [item for item in weather_appropriate_tops 
@@ -441,17 +438,17 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
         
         if hot_appropriate_tops:  # Only use filtered list if it's not empty
             weather_appropriate_tops = hot_appropriate_tops
-            random.shuffle(weather_appropriate_tops)  # Shuffle after filtering
+            random.shuffle(weather_appropriate_tops) 
         elif not weather_appropriate_tops:  # If filtering removed all tops, find tops tagged with "hot"
             hot_tops = [item for item in tops if item.get('temperature_range') and "hot" in item.get('temperature_range')]
             if hot_tops:
                 weather_appropriate_tops = hot_tops
-                random.shuffle(weather_appropriate_tops)  # Shuffle the hot tops
+                random.shuffle(weather_appropriate_tops) 
             else:
                 weather_appropriate_tops = list(tops)  # Fallback to all tops if no hot tops
-                random.shuffle(weather_appropriate_tops)  # Shuffle the fallback list
+                random.shuffle(weather_appropriate_tops)  
     
-    # NEW: For warm weather, identify and handle frequent items like your black hoodie
+    # For warm weather, identify and handle frequent items like your black hoodie
     if current_temp_range == "warm":
         # Identify potential hoodies or frequently selected items
         potential_hoodies = []
@@ -461,7 +458,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
             # Identify items that might be overselected based on their properties
             is_potential_hoodie = False
             
-            # Check if it's a black item with cool/warm tags (like your hoodie)
+            # Check if it's a black item with cool/warm tags 
             if ('colors' in item and item['colors'] and 
                 item['colors'][0]['name'].lower() == 'black' and
                 'temperature_range' in item and item['temperature_range'] and
@@ -483,16 +480,15 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
                 
             if random.random() < hoodie_chance:
                 weather_appropriate_tops = potential_hoodies
-                random.shuffle(weather_appropriate_tops)  # Shuffle after selection
+                random.shuffle(weather_appropriate_tops) 
             else:
                 weather_appropriate_tops = other_tops
-                random.shuffle(weather_appropriate_tops)  # Shuffle after selection
+                random.shuffle(weather_appropriate_tops)  
     
     # Make sure we have appropriate items after all these filters
     if not weather_appropriate_tops or not weather_appropriate_shoes:
         return None, None, None
     
-    # Refined selection process with anti-bias mechanism
     # Use a true random selection rather than any color bias
     base_top = random.choice(weather_appropriate_tops)
     
@@ -508,16 +504,14 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
         if not matching_occasion_shoes:
             matching_occasion_shoes = weather_appropriate_shoes
         else:
-            # IMPROVED: Shuffle the occasion-matching shoes to prevent bias
             random.shuffle(matching_occasion_shoes)
         
         # Then, from these occasion-matching shoes, filter to include color-matching, complementary, or neutral shoes
         # This now returns a dictionary of categories instead of a flat list
         shoe_categories = filter_shoes_by_color_match(base_top, matching_occasion_shoes)
         
-        # IMPROVED: Check if we have any direct color matches and prioritize them
+        # Check if we have any direct color matches and prioritize them
         if isinstance(shoe_categories, dict) and 'direct_match' in shoe_categories and shoe_categories['direct_match']:
-            # Shuffle the direct matches to prevent first-added bias
             random.shuffle(shoe_categories['direct_match'])
             
             # Score them based on weather and occasion criteria
@@ -529,10 +523,10 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
                 # Score based on occasion matching
                 occasion_score = 0.25 if has_matching_occasion(base_top, shoe) else 0
                 
-                # IMPROVED: Give higher weight to color match (exact match is guaranteed here)
+                # Give higher weight to color match 
                 combined_score = (weather_score * 0.45) + (1.0 * 0.30) + occasion_score
                 
-                # Special case for rain/snow - still prioritize waterproof shoes
+                # Special case for rain/snow 
                 if weather_condition in ["rain", "snow"] and has_weather_tag(shoe, weather_condition):
                     combined_score = min(1.0, combined_score * 1.2)
                 
@@ -552,15 +546,11 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
                     )[0]
                     return base_top, None, selected_shoes
         
-        # If no direct matches OR we randomly decided not to use them (15% chance),
-        # proceed with the regular scoring but with adjusted weights
-        
         # If we have categorized shoes - score them with category bonuses
         if isinstance(shoe_categories, dict) and sum(len(shoes_list) for shoes_list in shoe_categories.values()) > 0:
             # We have categorized shoes - score them with category bonuses
             scored_shoes = []
             
-            # IMPROVED: Shuffle each category before processing to prevent bias
             for category in shoe_categories:
                 random.shuffle(shoe_categories[category])
             
@@ -573,22 +563,21 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
                     # Base color score
                     color_score = calculate_dominant_color_match_score(base_top, shoe)
                     
-                    # IMPROVED: Apply stronger category-based color bonuses
+                    # Apply stronger category-based color bonuses
                     if category == 'direct_match':
                         # Much larger bonus for exact color match with top's dominant color
-                        color_score = min(1.0, color_score + 0.5)  # Increased from 0.3
+                        color_score = min(1.0, color_score + 0.5)  
                     elif category == 'complementary':
                         # Moderate bonus for complementary color match
-                        color_score = min(1.0, color_score + 0.2)  # Same as before
+                        color_score = min(1.0, color_score + 0.2)  
                     elif category == 'neutral':
                         # Slight bonus for neutral colors
-                        color_score = min(1.0, color_score + 0.1)  # Same as before
+                        color_score = min(1.0, color_score + 0.1)  
                     
                     # Score based on occasion matching
                     occasion_score = 0.25 if has_matching_occasion(base_top, shoe) else 0
                     
-                    # IMPROVED: Combine scores with updated weights
-                    # New weights: 45% weather, 30% color, 25% occasion
+                    # Combine scores with updated weights
                     combined_score = (weather_score * 0.45) + (color_score * 0.30) + occasion_score
                     
                     # Special case for rain/snow - prioritize waterproof shoes
@@ -604,24 +593,23 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
             if not all_shoes:
                 all_shoes = weather_appropriate_shoes
             
-            # IMPROVED: Shuffle before scoring to prevent first-added bias
             random.shuffle(all_shoes)
                 
             # Score all shoes without color categorization
             scored_shoes = []
             for shoe in all_shoes:
-                # Score based on weather appropriateness (using tagged data)
+                # Score based on weather appropriateness 
                 weather_score = calculate_weather_tag_match_score(base_top, shoe, current_temp_range, weather_condition)
                 
                 # Score based on color coordination
                 color_score = calculate_dominant_color_match_score(base_top, shoe)
                 
-                # IMPROVED: Check for direct color match and apply bonus
+                # Check for direct color match and apply bonus
                 top_dominant_color = base_top['colors'][0]['name'].lower() if 'colors' in base_top and base_top['colors'] else None
                 shoe_dominant_color = shoe['colors'][0]['name'].lower() if 'colors' in shoe and shoe['colors'] else None
                 
                 if top_dominant_color and shoe_dominant_color and top_dominant_color == shoe_dominant_color:
-                    # Direct color match bonus - much higher than before
+                    # Direct color match bonus
                     color_score = min(1.0, color_score + 0.5)
                 
                 # Score based on occasion matching
@@ -640,7 +628,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
         scored_shoes.sort(key=lambda x: x[1], reverse=True)
         top_shoes = scored_shoes[:min(3, len(scored_shoes))]
         
-        # IMPROVED: If we don't have any shoe options, return None
+        # If we don't have any shoe options, return None
         if not top_shoes:
             return None, None, None
         
@@ -652,9 +640,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
         
         return base_top, None, selected_shoes
     
-    # For standard tops, find matching bottom and shoes
-    
-    # IMPROVED: First, filter bottoms that share at least one occasion with the top
+    # Filter bottoms that share at least one occasion with the top
     # This ensures occasion matching between tops and bottoms
     matching_occasion_bottoms = [bottom for bottom in weather_appropriate_bottoms if shares_any_occasion(base_top, bottom)]
     
@@ -662,7 +648,6 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
     if not matching_occasion_bottoms:
         matching_occasion_bottoms = weather_appropriate_bottoms
     
-    # IMPROVED: Shuffle matching occasion bottoms to prevent first-added bias
     random.shuffle(matching_occasion_bottoms)
     
     # If there are no bottoms at all, return None
@@ -677,10 +662,10 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
         # Add color coordination score
         color_score = calculate_dominant_color_match_score(base_top, bottom)
         
-        # Add occasion score - IMPROVED: increased weight for occasion matching
+        # Add occasion score 
         occasion_score = 0.35 if has_matching_occasion(base_top, bottom) else 0
         
-        # Combine scores with updated weights: 45% weather, 30% color, 25% occasion
+        # Combine scores with following weights: 45% weather, 30% color, 25% occasion
         combined_score = (weather_score * 0.45) + (color_score * 0.30) + occasion_score
         
         scored_bottoms.append((bottom, combined_score))
@@ -689,7 +674,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
     scored_bottoms.sort(key=lambda x: x[1], reverse=True)
     top_bottoms = scored_bottoms[:min(3, len(scored_bottoms))]
     
-    # IMPROVED: If we don't have any bottom options, return None
+    # If we don't have any bottom options, return None
     if not top_bottoms:
         return None, None, None
     
@@ -713,7 +698,6 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
     if not matching_occasion_shoes:
         matching_occasion_shoes = weather_appropriate_shoes
     
-    # IMPROVED: Shuffle the shoe candidates to prevent first-added bias
     random.shuffle(matching_occasion_shoes)
     
     # If there are no shoes at all, return None
@@ -724,9 +708,8 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
     # This returns a dictionary of categories instead of a flat list
     shoe_categories = filter_shoes_by_color_match(base_top, matching_occasion_shoes)
     
-    # IMPROVED: Check if we have any direct color matches and prioritize them
+    # Check if we have any direct color matches and prioritize them
     if isinstance(shoe_categories, dict) and 'direct_match' in shoe_categories and shoe_categories['direct_match']:
-        # Shuffle the direct matches to prevent first-added bias
         random.shuffle(shoe_categories['direct_match'])
         
         # We have direct color matches - score them based on weather and occasion criteria
@@ -740,17 +723,16 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
             # Score based on occasion matching
             occasion_score = 0
             if has_matching_occasion(base_top, shoe) and has_matching_occasion(selected_bottom, shoe):
-                occasion_score = 0.25  # Full occasion matching bonus
+                occasion_score = 0.25 
             elif has_matching_occasion(base_top, shoe) or has_matching_occasion(selected_bottom, shoe):
-                occasion_score = 0.1  # Half occasion matching bonus
+                occasion_score = 0.1 
             
-            # IMPROVED: Give higher weight to color match (exact match is guaranteed here)
-            # New weights: 45% weather, 30% color (which is 1.0), 25% occasion
+            # Give higher weight to color match
             combined_score = (weather_score * 0.45) + (1.0 * 0.30) + occasion_score
             
             # Special case for rain/snow - still prioritize waterproof shoes
             if weather_condition in ["rain", "snow"] and has_weather_tag(shoe, weather_condition):
-                combined_score = min(1.0, combined_score * 1.2)  # Smaller multiplier to avoid overwhelming color preference
+                combined_score = min(1.0, combined_score * 1.2)  
             
             scored_direct_matches.append((shoe, combined_score))
         
@@ -760,7 +742,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
             top_direct_matches = scored_direct_matches[:min(3, len(scored_direct_matches))]
             
             # HIGH chance of selecting from color-matched shoes
-            if random.random() < 0.85:  # 85% chance to use direct color matches
+            if random.random() < 0.85:  
                 selected_shoes = random.choices(
                     [item[0] for item in top_direct_matches], 
                     weights=[max(0.1, item[1]) for item in top_direct_matches],
@@ -775,7 +757,6 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
     if isinstance(shoe_categories, dict) and sum(len(shoes_list) for shoes_list in shoe_categories.values()) > 0:
         scored_shoes = []
         
-        # IMPROVED: Shuffle each category before processing to prevent bias
         for category in shoe_categories:
             random.shuffle(shoe_categories[category])
         
@@ -790,7 +771,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
                 # Base color score
                 color_score = calculate_dominant_color_match_score(base_top, shoe)
                 
-                # IMPROVED: Apply category-based color bonuses
+                # Apply category-based color bonuses
                 if category == 'direct_match':
                     # Much larger bonus for exact color match with top's dominant color
                     color_score = min(1.0, color_score + 0.5)
@@ -808,8 +789,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
                 elif has_matching_occasion(base_top, shoe) or has_matching_occasion(selected_bottom, shoe):
                     occasion_score = 0.1  # Half occasion matching bonus
                 
-                # IMPROVED: Combine scores with updated weights
-                # New weights: 45% weather, 30% color, 25% occasion
+                # Combine scores with weights
                 combined_score = (weather_score * 0.45) + (color_score * 0.30) + occasion_score
                 
                 # Special case for rain/snow - still prioritize waterproof shoes
@@ -821,7 +801,6 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
         # For cases when we're using the simpler flat list of shoes
         all_shoes = matching_occasion_shoes if matching_occasion_shoes else weather_appropriate_shoes
         
-        # IMPROVED: Shuffle before scoring to prevent first-added bias
         random.shuffle(all_shoes)
             
         # Score all shoes with updated weights
@@ -837,7 +816,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
             bottom_color_score = calculate_dominant_color_match_score(selected_bottom, shoe)
             color_score = (top_color_score + bottom_color_score) / 2
             
-            # IMPROVED: Check for direct color match and apply bonus
+            # Check for direct color match and apply bonus
             top_colors = [color_data['name'].lower() for color_data in base_top['colors']] if 'colors' in base_top and base_top['colors'] else []
             shoe_colors = [color_data['name'].lower() for color_data in shoe['colors']] if 'colors' in shoe and shoe['colors'] else []
             
@@ -847,7 +826,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
                 any_color_match = any(shoe_color in top_colors for shoe_color in shoe_colors)
                 
                 if primary_color_match:
-                    # Highest bonus for primary color match (index 0 to index 0)
+                    # Highest bonus for primary color match 
                     color_score = min(1.0, color_score + 0.5)
                 elif any_color_match:
                     # Good bonus for any color match
@@ -860,8 +839,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
             elif has_matching_occasion(base_top, shoe) or has_matching_occasion(selected_bottom, shoe):
                 occasion_score = 0.1  # Half occasion matching bonus
             
-            # IMPROVED: Combine scores with updated weights
-            # New weights: 45% weather, 30% color, 25% occasion
+            # Combine scores with weights
             combined_score = (weather_score * 0.45) + (color_score * 0.30) + occasion_score
             
             # Special case for rain/snow - prioritize waterproof shoes
@@ -874,7 +852,7 @@ def generate_weather_based_outfit(tops, bottoms, shoes, temperature, weather_con
     scored_shoes.sort(key=lambda x: x[1], reverse=True)
     top_shoes = scored_shoes[:min(3, len(scored_shoes))]
     
-    # IMPROVED: If we don't have any shoe options, return None
+    # If we don't have any shoe options, return None
     if not top_shoes:
         return None, None, None
     
@@ -940,7 +918,7 @@ def filter_shoes_by_color_match(top, shoes):
         # Check if ANY shoe color directly matches ANY top color
         has_direct_match = any(shoe_color in top_colors for shoe_color in shoe_colors)
         
-        # Special case: Primary color match (index 0 to index 0) gets priority
+        # Special case: Primary color match gets priority
         primary_color_match = shoe_colors[0] == primary_top_color if shoe_colors and primary_top_color else False
         
         # Check if ANY shoe color complements ANY top color
@@ -968,7 +946,6 @@ def filter_shoes_by_color_match(top, shoes):
             other_shoes.append(shoe)
     
     # Combine all shoes groups, preserving priority order
-    # This preserves the groups so they can be used in scoring
     all_matched_shoes = {
         'direct_match': direct_match_shoes,
         'complementary': complementary_shoes,
