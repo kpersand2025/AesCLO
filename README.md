@@ -5,7 +5,7 @@
 AesCLO is a fashion-based web application designed to streamline outfit selection and wardrobe management. The platform allows users to upload images of their clothing items, organize them in a digital wardrobe, and receive AI-powered outfit recommendations based on various factors including color coordination, occasion, and weather conditions.
 
 
-Key Features:
+### Key Features:
 
   Virtual Wardrobe Management
   
@@ -30,7 +30,7 @@ Key Features:
   - Responsive Design: Works seamlessly across desktop and mobile devices
 
 
-Technology Stack:
+### Technology Stack:
 
   Frontend
   
@@ -58,7 +58,7 @@ Technology Stack:
   - Google Cloud Storage: Cloud storage for clothing item images
 
 
-Installation & Setup:
+### Installation & Setup:
 
   Prerequisites
   
@@ -84,7 +84,7 @@ Installation & Setup:
   - Run the application: python backend/app.py
 
 
-Possible Future Enhancements:
+### Possible Future Enhancements:
   
 - Event Planning: Sync with calendars to plan outfits for upcoming occasions
 - Shopping Integration: Recommend complementary items for purchase to enhance wardrobe
