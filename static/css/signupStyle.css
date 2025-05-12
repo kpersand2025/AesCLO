@@ -12,86 +12,85 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #1a1158; /* Navy background to match login page */
+  background: #1a1158; 
   padding: 20px;
 }
 
 .container {
   width: 100%;
   max-width: 550px;
-  background: #ffe6f0; /* Light Pink background */
-  padding: 25px; /* Reduced padding further */
+  background: #ffe6f0; 
+  padding: 25px; 
   border-radius: 25px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-  border: 2px solid #f7d6a6; /* Gold/cream border */
+  border: 2px solid #f7d6a6; 
 }
 
 .logo {
   display: block;
-  width: 250px; /* Further reduced logo size */
+  width: 250px; 
   height: auto;
-  margin: -5% auto 0; /* Slightly adjusted margin to bring it closer */
+  margin: -5% auto 0; 
   border-radius: 8px;
   margin-bottom: -15px;
 }
 
 h2 {
   text-align: center;
-  color: #1a1158; /* Navy text */
-  margin: 5px 0 15px; /* Reduced top margin even more */
-  font-size: 1.6em; /* Slightly smaller font size */
+  color: #1a1158; 
+  margin: 5px 0 15px; 
+  font-size: 1.6em; 
   font-weight: 500;
 }
 
 .form-group {
-  margin-bottom: 10px; /* Reduced margin to bring elements even closer */
+  margin-bottom: 10px; 
   position: relative;
 }
 
-/* Adjusting the margin-bottom for the entire form-group of the password field */
 .form-group #password {
-    margin-bottom: -10px; /* Adjust this value as needed */
+    margin-bottom: -10px; 
   }  
 
 label {
   display: block;
-  color: #1a1158; /* Navy text */
-  margin-bottom: 4px; /* Reduced margin-bottom for labels */
+  color: #1a1158; 
+  margin-bottom: 4px; 
   font-weight: 500;
 }
 
 input {
   width: 100%;
-  padding: 8px; /* Further reduced padding for smaller input boxes */
-  background: #f8f8ff; /* Very light lavender background */
-  border: 1px solid #d0d0e8; /* Light purple border */
+  padding: 8px; 
+  background: #f8f8ff; 
+  border: 1px solid #d0d0e8; 
   border-radius: 6px;
-  color: #1a1158; /* Navy text */
-  font-size: 14px; /* Slightly smaller font size */
+  color: #1a1158; 
+  font-size: 14px; 
   transition: border 0.3s ease;
 }
 
 input:focus {
   outline: none;
-  border: 1px solid #1a1158; /* Navy border on focus */
+  border: 1px solid #1a1158; 
 }
 
 button {
   width: 100%;
-  padding: 8px; /* Reduced padding for smaller button */
-  background: #1a1158; /* Navy button */
-  color: #f7d6a6; /* Gold/cream text */
+  padding: 8px; 
+  background: #1a1158; 
+  color: #f7d6a6;
   border: none;
   border-radius: 6px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 8px; /* Reduced margin to bring button closer */
+  margin-top: 8px; 
   transition: background 0.3s ease;
 }
 
 button:hover {
-  background: #2a2175; /* Slightly lighter navy on hover */
+  background: #2a2175;
 }
 
 button:active {
@@ -100,41 +99,41 @@ button:active {
 
 .return {
   background: transparent;
-  color: #1a1158; /* Navy text */
+  color: #1a1158; 
   border: 1px solid #1a1158;
   margin-top: 5px; 
 }
 
 .return:hover {
-  background: rgba(26, 17, 88, 0.1); /* Light navy background on hover */
+  background: rgba(26, 17, 88, 0.1); 
 }
 
 .password-hint {
   display: none;
   font-size: 12px;
-  color: #666666; /* Dark gray text */
-  margin-top: 4px; /* Reduced margin for hint */
+  color: #666666; 
+  margin-top: 4px; 
   background: rgba(26, 17, 88, 0.05);
   padding: 8px;
   border-radius: 4px;
 }
 
 .error {
-  color: #e53e65; /* Bright red for errors */
+  color: #e53e65; 
   font-size: 13px;
   display: block;
-  margin-top: 4px; /* Reduced margin for error messages */
+  margin-top: 4px; 
 }
 
 #message {
   text-align: center;
-  margin: 12px 0; /* Reduced margin around the message */
+  margin: 12px 0; 
   font-weight: 500;
 }
 
 .password-strength {
   height: 5px;
-  margin-top: 6px; /* Reduced margin above strength bar */
+  margin-top: 6px; 
   border-radius: 3px;
   overflow: hidden;
 }
@@ -142,25 +141,25 @@ button:active {
 .weak {
   width: 30%;
   height: 100%;
-  background: #e53e65; /* Red for weak passwords */
+  background: #e53e65; 
 }
 
 .medium {
   width: 60%;
   height: 100%;
-  background: #ffb74d; /* Orange for medium passwords */
+  background: #ffb74d;
 }
 
 .strong {
   width: 100%;
   height: 100%;
-  background: #4caf50; /* Green for strong passwords */
+  background: #4caf50; 
 }
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
   .container {
-    padding: 25px 15px; /* Reduced padding for smaller screens */
+    padding: 25px 15px; 
   }
   
   .logo {
