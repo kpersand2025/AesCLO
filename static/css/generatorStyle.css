@@ -355,12 +355,12 @@ section .content h1 {
     border: 2px solid #f0f0f0;
     background-color: white;
     object-fit: contain;
-    cursor: pointer; /* Add pointer cursor to indicate clickability */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition for hover effect */
+    cursor: pointer; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
 }
 
 .outfit-item img:hover {
-    transform: scale(1.05); /* Slightly scale up on hover */
+    transform: scale(1.05); 
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -1027,7 +1027,7 @@ footer {
 
 .unavailable-outfit-badge .material-symbols-outlined {
   font-size: 16px;
-  color: #f44336; /* Red */
+  color: #f44336; 
 }
 
 /* Add tooltip style for hover explanation */
