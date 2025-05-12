@@ -46,8 +46,8 @@ header {
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    background-color: #f2423c; /* Bootstrap-style red */
-    color: #ffffff; /* White text */
+    background-color: #f2423c; 
+    color: #ffffff; 
     text-decoration: none;
     border-radius: 6px;
     font-size: 14px;
@@ -57,14 +57,14 @@ header {
 }
 
 .logout-btn:hover {
-    background-color: #c9302c; /* Darker red for hover */
+    background-color: #c9302c; 
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(217, 83, 79, 0.3);
 }
 
 .logout-btn .material-symbols-outlined {
     font-size: 18px;
-    color: #ffffff; /* Ensure icon stays white */
+    color: #ffffff;
 }
 
 /* Main content section */
@@ -151,7 +151,7 @@ section .content h1 {
     font-size: 0.9em;
     line-height: 1.5;
     margin-bottom: 10px;
-    height: 55px; /* Fixed height for description to align buttons */
+    height: 55px; 
     display: flex;
     align-items: center;
     justify-content: center;
