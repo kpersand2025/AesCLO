@@ -5,7 +5,7 @@ from flask_cors import CORS
 import uuid
 import os
 import random
-import base64  # Added import for base64 decoding
+import base64  
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from google.cloud import vision
@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 from flask import send_file
 import tempfile
 
-# Try to load environment variables from .env file in development
+# Load environment variables from .env file
 if os.path.exists('.env'):
     load_dotenv()
 
@@ -41,8 +41,8 @@ CORS(app)
 app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24))
 
 # Session security configurations
-app.config["SESSION_PERMANENT"] = False  # Session expires when browser closes
-app.config["SESSION_TYPE"] = "filesystem"  # Store session data securely
+app.config["SESSION_PERMANENT"] = False 
+app.config["SESSION_TYPE"] = "filesystem"  
 
 # Configure MongoDB connection from environment variable
 connection_string = os.environ.get("MONGODB_URI")
@@ -119,7 +119,7 @@ def allowed_file(filename):
 @app.route("/", methods=["GET"])
 def login_page():
     if "user" in session:
-        return redirect(url_for("home"))  # Redirect logged-in users to home
+        return redirect(url_for("home"))  
     return render_template("login.html")  
 
 # Login route
@@ -168,14 +168,14 @@ def register():
     users_collection.insert_one(new_user)
     return jsonify({"message": "Account created successfully!"}), 201
 
-# Home route (requires authentication)
+# Home route
 @app.route("/home")
 def home():
     if "user" not in session:
         return redirect(url_for("login_page"))
     return render_template("home.html")  
 
-# Upload page (GET request)
+# Upload page 
 @app.route("/upload")
 def upload_page():
     if "user" not in session:
@@ -223,8 +223,8 @@ def generate_color_outfit():
         return jsonify({"success": False, "message": "Unauthorized"}), 401
         
     data = request.get_json()
-    base_color = data.get("base_color")  # Get the base color
-    random_color = data.get("random_color", False)  # Check if random color mode is enabled
+    base_color = data.get("base_color")  
+    random_color = data.get("random_color", False)  
     
     user = users_collection.find_one({"username": session["user"]})
     if not user:
@@ -274,19 +274,19 @@ def generate_color_outfit():
                         "message": "Could not generate a well-coordinated outfit. Please try again or try with different items."
                     }), 400
                 
-                # Return outfit with no bottom - UPDATED to use GCS URL
+                # Return outfit with no bottom
                 return jsonify({
                     "success": True,
                     "top": {
                         "id": selected_top["item_id"],
-                        "image_url": selected_top["image_url"],  # Use GCS URL directly
+                        "image_url": selected_top["image_url"],  
                         "colors": selected_top.get("colors", []),
                         "unavailable": selected_top.get("unavailable", False)
                     },
                     "bottom": None,  # No bottom for complete tops
                     "shoes": {
                         "id": best_shoes["item_id"],
-                        "image_url": best_shoes["image_url"],  # Use GCS URL directly
+                        "image_url": best_shoes["image_url"],  
                         "colors": best_shoes.get("colors", []),
                         "unavailable": best_shoes.get("unavailable", False)
                     },
@@ -306,24 +306,23 @@ def generate_color_outfit():
                         "message": "Could not generate a well-coordinated outfit. Please try again or try with different items."
                     }), 400
                 
-                # UPDATED to use GCS URLs
                 return jsonify({
                     "success": True,
                     "top": {
                         "id": selected_top["item_id"],
-                        "image_url": selected_top["image_url"],  # Use GCS URL directly
+                        "image_url": selected_top["image_url"],  
                         "colors": selected_top.get("colors", []),
                         "unavailable": selected_top.get("unavailable", False)
                     },
                     "bottom": {
                         "id": best_bottom["item_id"],
-                        "image_url": best_bottom["image_url"],  # Use GCS URL directly
+                        "image_url": best_bottom["image_url"], 
                         "colors": best_bottom.get("colors", []),
                         "unavailable": best_bottom.get("unavailable", False)
                     },
                     "shoes": {
                         "id": best_shoes["item_id"],
-                        "image_url": best_shoes["image_url"],  # Use GCS URL directly
+                        "image_url": best_shoes["image_url"], 
                         "colors": best_shoes.get("colors", []),
                         "unavailable": best_shoes.get("unavailable", False)
                     },
@@ -379,19 +378,19 @@ def generate_color_outfit():
                     "message": "Could not generate a well-coordinated outfit. Please try again or try with different items."
                 }), 400
             
-            # Return outfit with no bottom - UPDATED to use GCS URLs
+            # Return outfit with no bottom 
             return jsonify({
                 "success": True,
                 "top": {
                     "id": selected_top["item_id"],
-                    "image_url": selected_top["image_url"],  # Use GCS URL directly
+                    "image_url": selected_top["image_url"],  
                     "colors": selected_top.get("colors", []),
                     "unavailable": selected_top.get("unavailable", False)
                 },
                 "bottom": None,  # No bottom for complete tops
                 "shoes": {
                     "id": best_shoes["item_id"],
-                    "image_url": best_shoes["image_url"],  # Use GCS URL directly
+                    "image_url": best_shoes["image_url"], 
                     "colors": best_shoes.get("colors", []),
                     "unavailable": best_shoes.get("unavailable", False)
                 },
@@ -407,24 +406,23 @@ def generate_color_outfit():
                     "message": "Could not generate a well-coordinated outfit. Please try again or try with different items."
                 }), 400
             
-            # UPDATED to use GCS URLs
             return jsonify({
                 "success": True,
                 "top": {
                     "id": selected_top["item_id"],
-                    "image_url": selected_top["image_url"],  # Use GCS URL directly
+                    "image_url": selected_top["image_url"],  
                     "colors": selected_top.get("colors", []),
                     "unavailable": selected_top.get("unavailable", False)
                 },
                 "bottom": {
                     "id": best_bottom["item_id"],
-                    "image_url": best_bottom["image_url"],  # Use GCS URL directly
+                    "image_url": best_bottom["image_url"],  
                     "colors": best_bottom.get("colors", []),
                     "unavailable": best_bottom.get("unavailable", False)
                 },
                 "shoes": {
                     "id": best_shoes["item_id"],
-                    "image_url": best_shoes["image_url"],  # Use GCS URL directly
+                    "image_url": best_shoes["image_url"], 
                     "colors": best_shoes.get("colors", []),
                     "unavailable": best_shoes.get("unavailable", False)
                 },
@@ -518,12 +516,12 @@ def generate_occasion_outfit():
                     "message": f"Could not generate a suitable outfit for {target_occasion}. Try uploading more items."
                 }), 400
             
-            # Return outfit with no bottom - UPDATED to use GCS URLs
+            # Return outfit with no bottom 
             return jsonify({
                 "success": True,
                 "top": {
                     "id": selected_top["item_id"],
-                    "image_url": selected_top["image_url"],  # Use GCS URL directly
+                    "image_url": selected_top["image_url"], 
                     "colors": selected_top.get("colors", []),
                     "occasions": selected_top.get("occasions", []),
                     "unavailable": selected_top.get("unavailable", False)
@@ -531,7 +529,7 @@ def generate_occasion_outfit():
                 "bottom": None,  # No bottom for complete tops
                 "shoes": {
                     "id": best_shoes["item_id"],
-                    "image_url": best_shoes["image_url"],  # Use GCS URL directly
+                    "image_url": best_shoes["image_url"],  
                     "colors": best_shoes.get("colors", []),
                     "occasions": best_shoes.get("occasions", []),
                     "unavailable": best_shoes.get("unavailable", False)
@@ -547,26 +545,25 @@ def generate_occasion_outfit():
                     "message": f"Could not generate a suitable outfit for {target_occasion}. Try uploading more items."
                 }), 400
             
-            # UPDATED to use GCS URLs
             return jsonify({
                 "success": True,
                 "top": {
                     "id": selected_top["item_id"],
-                    "image_url": selected_top["image_url"],  # Use GCS URL directly
+                    "image_url": selected_top["image_url"],  
                     "colors": selected_top.get("colors", []),
                     "occasions": selected_top.get("occasions", []),
                     "unavailable": selected_top.get("unavailable", False)
                 },
                 "bottom": {
                     "id": best_bottom["item_id"],
-                    "image_url": best_bottom["image_url"],  # Use GCS URL directly
+                    "image_url": best_bottom["image_url"],  
                     "colors": best_bottom.get("colors", []),
                     "occasions": best_bottom.get("occasions", []),
                     "unavailable": best_bottom.get("unavailable", False)
                 },
                 "shoes": {
                     "id": best_shoes["item_id"],
-                    "image_url": best_shoes["image_url"],  # Use GCS URL directly
+                    "image_url": best_shoes["image_url"],  
                     "colors": best_shoes.get("colors", []),
                     "occasions": best_shoes.get("occasions", []),
                     "unavailable": best_shoes.get("unavailable", False)
@@ -589,7 +586,7 @@ def save_outfit():
     # Get JSON data from request
     data = request.get_json()
     top_id = data.get("top_id")
-    bottom_id = data.get("bottom_id")  # This might be None for complete tops
+    bottom_id = data.get("bottom_id")  
     shoe_id = data.get("shoe_id")
     
     # Validate data - only top and shoes are required now
@@ -606,7 +603,7 @@ def save_outfit():
         "outfit_id": str(uuid.uuid4()),
         "user_id": user["_id"],
         "top_id": top_id,
-        "bottom_id": bottom_id,  # This can be None for complete tops
+        "bottom_id": bottom_id,  
         "shoe_id": shoe_id,
         "created_at": datetime.utcnow().isoformat(),
         "name": data.get("name", f"Outfit {datetime.now().strftime('%Y-%m-%d %H:%M')}")
@@ -632,7 +629,6 @@ def wardrobe():
     # Convert MongoDB ObjectId to string
     for item in wardrobe_items:
         item["_id"] = str(item["_id"])
-        # No change needed here - image_url is already stored as GCS URL
 
     return render_template("wardrobe.html", wardrobe_items=wardrobe_items)
 
@@ -652,7 +648,7 @@ def get_wardrobe():
     for item in wardrobe_items:
         item_data = {
             "id": item["item_id"],
-            "image_url": item["image_url"],  # Use the stored GCS URL directly
+            "image_url": item["image_url"],  
             "category": item["category"]
         }
         if "subcategory" in item:
@@ -718,7 +714,7 @@ def saved_outfits():
             
             # Add bottom image only if it exists
             if bottom:
-                outfit_data["bottom_image"] = bottom["image_url"]  # Use GCS URL
+                outfit_data["bottom_image"] = bottom["image_url"]  
             
             outfits_data.append(outfit_data)
     
@@ -747,7 +743,7 @@ def delete_outfit():
     else:
         return jsonify({"success": False, "message": "Outfit not found or not authorized to delete"}), 404
 
-# Updated image upload handler with color detection and occasion tagging
+# Image upload handler with color detection and occasion tagging
 @app.route("/upload", methods=["POST"])
 def upload_image():
     if "user" not in session:
@@ -837,14 +833,14 @@ def upload_image():
         # Upload the file
         blob.upload_from_filename(temp_filepath)
         
-        # Instead of direct GCS URL, use our serve_image route
+        # Instead of direct GCS URL, use serve_image route
         image_url = f"/serve_image/{unique_filename}"
         
         # Save item in database with the new image URL format
         new_upload = {
             "item_id": str(uuid.uuid4()),
             "user_id": user["_id"],
-            "image_url": image_url,  # Use our serve_image route
+            "image_url": image_url,  
             "gcs_path": f"gs://{GCS_BUCKET}/{unique_filename}", 
             "filename": unique_filename,
             "timestamp": datetime.utcnow().isoformat(),
@@ -1063,7 +1059,7 @@ def get_weather():
             }), 404
         
         # Extract relevant weather data
-        temp = weather_data['main']['temp']  # Already rounded to nearest whole number in the utility function
+        temp = weather_data['main']['temp']  
         weather_id = weather_data['weather'][0]['id']
         weather_condition = get_weather_condition_by_id(weather_id)
         weather_description = weather_data['weather'][0]['description']
@@ -1146,12 +1142,12 @@ def generate_weather_outfit():
                     "message": f"Could not generate a suitable outfit for {weather_condition} weather at {temperature}°F. Try uploading more items."
                 }), 400
             
-            # Return outfit with no bottom - UPDATED to use GCS URLs
+            # Return outfit with no bottom
             return jsonify({
                 "success": True,
                 "top": {
                     "id": selected_top["item_id"],
-                    "image_url": selected_top["image_url"],  # Use GCS URL directly
+                    "image_url": selected_top["image_url"], 
                     "colors": selected_top.get("colors", []),
                     "weather_conditions": selected_top.get("weather_conditions", []),
                     "temperature_range": selected_top.get("temperature_range", []),
@@ -1160,7 +1156,7 @@ def generate_weather_outfit():
                 "bottom": None,  # No bottom for complete tops
                 "shoes": {
                     "id": best_shoes["item_id"],
-                    "image_url": best_shoes["image_url"],  # Use GCS URL directly
+                    "image_url": best_shoes["image_url"],  
                     "colors": best_shoes.get("colors", []),
                     "weather_conditions": best_shoes.get("weather_conditions", []),
                     "temperature_range": best_shoes.get("temperature_range", []),
@@ -1177,12 +1173,11 @@ def generate_weather_outfit():
                     "message": f"Could not generate a suitable outfit for {weather_condition} weather at {temperature}°F. Try uploading more items."
                 }), 400
             
-            # UPDATED to use GCS URLs
             return jsonify({
                 "success": True,
                 "top": {
                     "id": selected_top["item_id"],
-                    "image_url": selected_top["image_url"],  # Use GCS URL directly
+                    "image_url": selected_top["image_url"], 
                     "colors": selected_top.get("colors", []),
                     "weather_conditions": selected_top.get("weather_conditions", []),
                     "temperature_range": selected_top.get("temperature_range", []),
@@ -1190,7 +1185,7 @@ def generate_weather_outfit():
                 },
                 "bottom": {
                     "id": best_bottom["item_id"],
-                    "image_url": best_bottom["image_url"],  # Use GCS URL directly
+                    "image_url": best_bottom["image_url"],  
                     "colors": best_bottom.get("colors", []),
                     "weather_conditions": best_bottom.get("weather_conditions", []),
                     "temperature_range": best_bottom.get("temperature_range", []),
@@ -1198,7 +1193,7 @@ def generate_weather_outfit():
                 },
                 "shoes": {
                     "id": best_shoes["item_id"],
-                    "image_url": best_shoes["image_url"],  # Use GCS URL directly
+                    "image_url": best_shoes["image_url"],  
                     "colors": best_shoes.get("colors", []),
                     "weather_conditions": best_shoes.get("weather_conditions", []),
                     "temperature_range": best_shoes.get("temperature_range", []),
