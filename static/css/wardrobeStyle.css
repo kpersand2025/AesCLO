@@ -302,9 +302,9 @@ section .content h1 {
     padding: 20px;
     border-radius: 12px;
     width: 700px;
-    max-width: 900%;  /* Increased from 80% */
-    max-height: 90%;  /* Increased from 80% */
-    overflow: hidden;  /* Changed back to hidden */
+    max-width: 900%;  
+    max-height: 90%; 
+    overflow: hidden;  
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
     animation: modalIn 0.3s ease;
     display: flex;
@@ -361,7 +361,7 @@ section .content h1 {
     font-size: 1.5em;
 }
 
-/* Updated: Changed from column to row layout for details */
+/* Row layout for details */
 .detail-section-row {
     display: flex;
     flex-direction: row;
@@ -402,7 +402,7 @@ section .content h1 {
     color: #f7d6a6;
     font-size: 0.9em;
     font-weight: 500;
-    margin: 0 auto;  /* Center the badge */
+    margin: 0 auto;  
 }
 
 /* Color chips styling */
@@ -411,7 +411,7 @@ section .content h1 {
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 5px;
-    justify-content: center;  /* Center the chips */
+    justify-content: center; 
 }
 
 .color-chip {
@@ -438,7 +438,7 @@ section .content h1 {
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 5px;
-    justify-content: center;  /* Center the tags */
+    justify-content: center;  
 }
 
 .occasion-tag {
@@ -551,23 +551,23 @@ footer {
 
 /* Add color-coding for different accessory subcategories */
 .accessory-item[data-subcategory="jewelry"] .accessory-badge {
-    background-color: #9c27b0; /* Purple for jewelry */
+    background-color: #9c27b0; 
 }
 
 .accessory-item[data-subcategory="winter"] .accessory-badge {
-    background-color: #2196f3; /* Blue for winter accessories */
+    background-color: #2196f3; 
 }
 
 .accessory-item[data-subcategory="bags"] .accessory-badge {
-    background-color: #ff9800; /* Orange for bags */
+    background-color: #ff9800; 
 }
 
 .accessory-item[data-subcategory="headwear"] .accessory-badge {
-    background-color: #4caf50; /* Green for headwear */
+    background-color: #4caf50; 
 }
 
 .accessory-item[data-subcategory="other"] .accessory-badge {
-    background-color: #607d8b; /* Blue-grey for other accessories */
+    background-color: #607d8b; 
 }
 
 /* Empty state for the accessories section */
@@ -602,7 +602,7 @@ footer {
 
 .unavailable-badge .material-symbols-outlined {
     font-size: 18px;
-    color: #f44336; /* Red */
+    color: #f44336; 
 }
 
 /* Apply a subtle grayscale filter to unavailable items */
@@ -622,15 +622,15 @@ footer {
 }
 
 .available-status {
-    background-color: #e8f5e9; /* Light green */
-    color: #2e7d32; /* Dark green */
-    border: 1px solid #a5d6a7; /* Medium green */
+    background-color: #e8f5e9; 
+    color: #2e7d32; 
+    border: 1px solid #a5d6a7; 
 }
 
 .unavailable-status {
-    background-color: #ffebee; /* Light red */
-    color: #c62828; /* Dark red */
-    border: 1px solid #ef9a9a; /* Medium red */
+    background-color: #ffebee; 
+    color: #c62828; 
+    border: 1px solid #ef9a9a; 
 }
 
 /* Context menu for right-click actions */
@@ -669,7 +669,7 @@ footer {
 }
 
 .context-menu-option.remove-item .material-symbols-outlined {
-    color: #f44336; /* Red for delete */
+    color: #f44336; 
 }
 
 /* Make context menu option text unselectable */
@@ -691,17 +691,17 @@ footer {
 
 /* Toggle availability button styling */
 .toggle-btn {
-    background-color: #1a1158; /* Default navy blue */
+    background-color: #1a1158; 
     color: white;
     margin-right: 10px;
 }
 
 .toggle-btn.make-available {
-    background-color: #4caf50; /* Green for "Mark as Available" */
+    background-color: #4caf50; 
 }
 
 .toggle-btn.make-unavailable {
-    background-color: #ff9800; /* Changed to orange for "Mark as Unavailable" */
+    background-color: #ff9800; 
 }
 
 /* Filter options for showing/hiding unavailable items */
@@ -786,22 +786,22 @@ footer {
         padding: 5px 10px;
     }
     
-    /* Keep row layout on mobile for details - CHANGED HERE */
+    /* Keep row layout on mobile for details */
     .detail-section-row {
         flex-direction: row;
-        gap: 8px; /* Reduce gap on smaller screens */
+        gap: 8px; 
     }
     
     .detail-section {
         margin-bottom: 5px;
-        font-size: 0.9em; /* Slightly smaller font size on mobile */
+        font-size: 0.9em; 
     }
     
     .status-badge {
         min-width: auto;
     }
     
-    /* Keep row layout for modal actions - CHANGED HERE */
+    /* Keep row layout for modal actions */
     .modal-actions {
         flex-direction: row;
         width: 100%;
@@ -827,14 +827,14 @@ footer {
         height: 180px;
     }
     
-    /* Keep modal actions in row layout - CHANGED HERE */
+    /* Keep modal actions in row layout */
     .modal-actions {
         flex-direction: row;
         width: 100%;
-        gap: 10px; /* Reduced gap for smaller screens */
+        gap: 10px; 
     }
     
-    /* Make buttons smaller on very small screens - ADDED */
+    /* Make buttons smaller on very small screens */
     .modal-actions .btn {
         padding: 8px 12px;
         font-size: 0.9em;
