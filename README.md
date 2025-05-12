@@ -80,8 +80,8 @@ Installation & Setup:
   - Set up environment variables (see above)
   - Run the application: python backend/app.py
 
-  Possible Future Enhancements
+Possible Future Enhancements:
   
-  - Event Planning: Sync with calendars to plan outfits for upcoming occasions
-  - Shopping Integration: Recommend complementary items for purchase to enhance wardrobe
-  - Style-Based Matching: Identify and suggest outfits based on specific fashion styles
+- Event Planning: Sync with calendars to plan outfits for upcoming occasions
+- Shopping Integration: Recommend complementary items for purchase to enhance wardrobe
+- Style-Based Matching: Identify and suggest outfits based on specific fashion styles
