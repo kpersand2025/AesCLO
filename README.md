@@ -1,4 +1,4 @@
-# AesCLO
+# AesCLO - Your Personal Wardrobe Assistant
 
 ### Overview:
 
