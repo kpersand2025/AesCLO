@@ -1,6 +1,7 @@
 # AesCLO
 
 Overview:
+
 AesCLO is a fashion-based web application designed to streamline outfit selection and wardrobe management. The platform allows users to upload images of their clothing items, organize them in a digital wardrobe, and receive AI-powered outfit recommendations based on various factors including color coordination, occasion, and weather conditions.
 
 Key Features:
