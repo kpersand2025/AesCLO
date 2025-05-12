@@ -185,7 +185,7 @@ def categorize_clothing_item(image_path, api_key=None):
         
         # Make the API request
         response = requests.post(url, json=payload)
-        response.raise_for_status()  # Raise exception for HTTP errors
+        response.raise_for_status()  
         
         # Parse the response
         result = response.json()
