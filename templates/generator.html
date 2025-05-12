@@ -79,7 +79,7 @@
                 <input type="radio" id="weatherMode" name="generationMode" value="weather">
                 <span class="material-symbols-outlined">thermostat</span>
                 <span>Weather Based</span>
-              </label>
+              </label>              
             </div>
 
             <div id="randomOptions" class="random-options">
@@ -153,33 +153,86 @@
                 </div>
               </div>
             </div>
-
             <div id="weatherOptions" class="weather-options" style="display: none;">
               <div class="option-explanation">
-                <span class="material-symbols-outlined">cloud</span>
-                <p>Select a location to generate an outfit suited for the current weather conditions.</p>
+                <span class="material-symbols-outlined">wb_sunny</span>
+                <p>Generate an outfit based on current weather conditions. Enter your location to get real-time weather data, or manually select weather conditions.</p>
               </div>
               
               <div class="weather-selection-container">
-                <div class="weather-location-input">
-                  <label for="cityInput">Enter City:</label>
-                  <div class="input-with-button">
-                    <input type="text" id="cityInput" placeholder="e.g. New York, London, Tokyo">
-                    <button id="getWeatherBtn" class="btn get-weather-btn">
-                      <span class="material-symbols-outlined">search</span>
-                    </button>
+                <div class="weather-selection-tabs">
+                  <button class="weather-tab active" data-tab="location-tab">Get Weather by Location</button>
+                  <button class="weather-tab" data-tab="manual-tab">Enter Weather Manually</button>
+                </div>
+                
+                <div id="location-tab" class="weather-tab-content">
+                  <div class="location-input">
+                    <label for="locationInput">Enter your city or ZIP code:</label>
+                    <div class="location-search">
+                      <input type="text" id="locationInput" placeholder="e.g. New York or 10001">
+                      <button id="getWeatherBtn" class="btn small-btn">
+                        <span class="material-symbols-outlined">search</span>
+                        Get Weather
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div id="weatherInfo" class="weather-info" style="display: none;">
+                    <div class="weather-data">
+                      <div class="weather-header">
+                        <span id="weatherLocation" class="weather-location">New York, NY</span>
+                        <span id="weatherIcon" class="material-symbols-outlined">sunny</span>
+                      </div>
+                      <div class="weather-details">
+                        <div class="weather-temp">
+                          <span id="weatherTemp">72</span>°F
+                        </div>
+                        <div class="weather-condition" id="weatherCondition">Sunny</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
-                <div id="weatherDisplay" class="weather-display" style="display: none;">
-                  <div class="weather-info">
-                    <span class="material-symbols-outlined weather-icon" id="weatherIcon">cloud</span>
-                    <div class="weather-details">
-                      <div class="weather-location" id="weatherLocation">Location</div>
-                      <div class="weather-temperature" id="weatherTemperature">Temperature</div>
-                      <div class="weather-description" id="weatherDescription">Description</div>
+                <div id="manual-tab" class="weather-tab-content" style="display: none;">
+                  <div class="manual-weather-selection">
+                    <div class="manual-weather-row">
+                      <label>Weather Condition:</label>
+                      <div class="weather-buttons">
+                        <button class="weather-condition-btn" data-condition="sunny">
+                          <span class="material-symbols-outlined">sunny</span>
+                          <span>Sunny</span>
+                        </button>
+                        <button class="weather-condition-btn" data-condition="cloudy">
+                          <span class="material-symbols-outlined">cloud</span>
+                          <span>Cloudy</span>
+                        </button>
+                        <button class="weather-condition-btn" data-condition="rain">
+                          <span class="material-symbols-outlined">rainy</span>
+                          <span>Rain</span>
+                        </button>
+                        <button class="weather-condition-btn" data-condition="snow">
+                          <span class="material-symbols-outlined">ac_unit</span>
+                          <span>Snow</span>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div class="manual-weather-row">
+                      <label for="temperatureInput">Temperature (°F):</label>
+                      <div class="temperature-input">
+                        <input type="number" id="temperatureInput" min="-20" max="120" value="70">
+                        <span class="temperature-unit">°F</span>
+                      </div>
                     </div>
                   </div>
+                </div>
+                
+                <div class="weather-selection-info">
+                  <span id="selectedWeatherDisplay">No weather conditions selected</span>
+                  <button id="clearWeatherSelection" class="btn clear-btn" style="display: none;">
+                    <span class="material-symbols-outlined">backspace</span>
+                    Clear
+                  </button>
                 </div>
               </div>
             </div>
@@ -221,14 +274,14 @@
         const response = await fetch("/get_wardrobe");
         return response.json();
       }
-    
+
       // Global variables to store the current outfit items
       let currentOutfit = {
         top: null,
         bottom: null,
         shoe: null
       };
-    
+
       // Function to load user's color palette
       async function loadUserColorPalette() {
         try {
@@ -351,7 +404,7 @@
           });
         });
       }
-    
+
       // Set up occasion button click event listeners
       function setupOccasionButtonListeners() {
         const occasionBtns = document.querySelectorAll('.occasion-btn');
@@ -385,7 +438,7 @@
           this.style.display = 'none';
         });
       }
-    
+
       // Toggle mode selection
       document.querySelectorAll('input[name="generationMode"]').forEach(radioBtn => {
         radioBtn.addEventListener('change', function() {
@@ -399,68 +452,115 @@
           const randomOptions = document.getElementById('randomOptions');
           const colorOptions = document.getElementById('colorOptions');
           const occasionOptions = document.getElementById('occasionOptions');
-          const weatherOptions = document.getElementById('weatherOptions');
           
           if (this.value === 'color') {
             colorOptions.style.display = 'block';
             randomOptions.style.display = 'none';
             occasionOptions.style.display = 'none';
-            weatherOptions.style.display = 'none';
             // Load the user's color palette when color mode is selected
             loadUserColorPalette();
           } else if (this.value === 'occasion') {
             colorOptions.style.display = 'none';
             randomOptions.style.display = 'none';
             occasionOptions.style.display = 'block';
-            weatherOptions.style.display = 'none';
-          } else if (this.value === 'weather') {
-            colorOptions.style.display = 'none';
-            randomOptions.style.display = 'none';
-            occasionOptions.style.display = 'none';
-            weatherOptions.style.display = 'block';
           } else {
             colorOptions.style.display = 'none';
             randomOptions.style.display = 'block';
             occasionOptions.style.display = 'none';
-            weatherOptions.style.display = 'none';
           }
         });
       });
-    
+
       // Random outfit generation
       async function generateRandomOutfit() {
         const wardrobe = await fetchWardrobe();
         const outfitDisplay = document.getElementById("outfitDisplay");
-    
-        if (
-          wardrobe.tops.length < 1 ||
-          wardrobe.bottoms.length < 1 ||
-          wardrobe.shoes.length < 1
-        ) {
+
+        if (wardrobe.tops.length < 1 || wardrobe.shoes.length < 1) {
           outfitDisplay.innerHTML = `
             <div class="alert alert-warning">
               <span class="material-symbols-outlined">warning</span>
-              <span>You need at least one top, one bottom, and one pair of shoes in your wardrobe to generate an outfit.</span>
+              <span>You need at least one top and one pair of shoes in your wardrobe to generate an outfit.</span>
             </div>
           `;
           return;
         }
-    
-        const top =
-          wardrobe.tops[Math.floor(Math.random() * wardrobe.tops.length)];
-        const bottom =
-          wardrobe.bottoms[Math.floor(Math.random() * wardrobe.bottoms.length)];
-        const shoe =
-          wardrobe.shoes[Math.floor(Math.random() * wardrobe.shoes.length)];
-    
-        // Store current outfit
-        currentOutfit.top = top;
-        currentOutfit.bottom = bottom;
-        currentOutfit.shoe = shoe;
-    
-        displayOutfit(top, bottom, shoe);
+
+        // Randomly select a top
+        const top = wardrobe.tops[Math.floor(Math.random() * wardrobe.tops.length)];
+        
+        // Instead of trying to use random selection for complete top outfits,
+        // we'll make an API call to get proper outfit data
+        try {
+          // Show loading state
+          outfitDisplay.innerHTML = `
+            <div class="loading-spinner">
+              <span class="material-symbols-outlined spinning">refresh</span>
+              <p>Generating random outfit...</p>
+            </div>
+          `;
+          
+          // Use the color-coordinated endpoint with random color option
+          const response = await fetch('/generate_color_outfit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              random_color: true
+            })
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            // Store current outfit
+            currentOutfit.top = result.top;
+            currentOutfit.bottom = result.bottom;
+            currentOutfit.shoe = result.shoes;
+            
+            // Display the outfit - the API will handle complete tops correctly
+            displayOutfit(result.top, result.bottom, result.shoes, "random");
+          } else {
+            // Fall back to simple random selection if API call fails
+            const shoe = wardrobe.shoes[Math.floor(Math.random() * wardrobe.shoes.length)];
+            let bottom = null;
+            
+            // For the fallback, assume it's not a complete top since we can't tell
+            if (wardrobe.bottoms.length > 0) {
+              bottom = wardrobe.bottoms[Math.floor(Math.random() * wardrobe.bottoms.length)];
+            }
+            
+            // Store current outfit
+            currentOutfit.top = top;
+            currentOutfit.bottom = bottom;
+            currentOutfit.shoe = shoe;
+            
+            // Display the outfit
+            displayOutfit(top, bottom, shoe, "random");
+          }
+        } catch (error) {
+          console.error("Error generating random outfit:", error);
+          
+          // Fall back to simple random selection if the API call fails
+          const shoe = wardrobe.shoes[Math.floor(Math.random() * wardrobe.shoes.length)];
+          let bottom = null;
+          
+          // For the fallback, assume it's not a complete top since we can't tell
+          if (wardrobe.bottoms.length > 0) {
+            bottom = wardrobe.bottoms[Math.floor(Math.random() * wardrobe.bottoms.length)];
+          }
+          
+          // Store current outfit
+          currentOutfit.top = top;
+          currentOutfit.bottom = bottom;
+          currentOutfit.shoe = shoe;
+          
+          // Display the outfit
+          displayOutfit(top, bottom, shoe, "random");
+        }
       }
-    
+
       // Color-coordinated outfit generation
       async function generateColorOutfit() {
         const outfitDisplay = document.getElementById("outfitDisplay");
@@ -533,7 +633,7 @@
           `;
         }
       }
-    
+
       // Occasion-based outfit generation
       async function generateOccasionOutfit() {
         const outfitDisplay = document.getElementById("outfitDisplay");
@@ -599,181 +699,6 @@
           `;
         }
       }
-    
-      // Weather-based outfit generation
-      async function generateWeatherOutfit() {
-        const outfitDisplay = document.getElementById("outfitDisplay");
-        const cityInput = document.getElementById('cityInput').value.trim();
-        
-        if (!cityInput) {
-          outfitDisplay.innerHTML = `
-            <div class="alert alert-warning">
-              <span class="material-symbols-outlined">cloud</span>
-              <span>Please enter a city name and get weather data first.</span>
-            </div>
-          `;
-          return;
-        }
-        
-        // Show loading state
-        outfitDisplay.innerHTML = `
-          <div class="loading-spinner">
-            <span class="material-symbols-outlined spinning">refresh</span>
-            <p>Generating weather-appropriate outfit...</p>
-          </div>
-        `;
-        
-        try {
-          const response = await fetch('/generate_weather_outfit', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              city: cityInput
-            })
-          });
-          
-          const result = await response.json();
-          
-          if (result.success) {
-            // Store current outfit
-            currentOutfit.top = result.top;
-            currentOutfit.bottom = result.bottom;
-            currentOutfit.shoe = result.shoes;
-            
-            // Display the outfit with weather information
-            displayOutfit(
-              result.top, 
-              result.bottom, 
-              result.shoes, 
-              `weather-${result.weather.condition}`,
-              result.weather
-            );
-          } else {
-            outfitDisplay.innerHTML = `
-              <div class="alert alert-warning">
-                <span class="material-symbols-outlined">warning</span>
-                <span>${result.message}</span>
-              </div>
-            `;
-          }
-        } catch (error) {
-          console.error("Error generating outfit:", error);
-          outfitDisplay.innerHTML = `
-            <div class="alert alert-warning">
-              <span class="material-symbols-outlined">error</span>
-              <span>Failed to generate outfit. Please try again.</span>
-            </div>
-          `;
-        }
-      }
-    
-      // Display outfit in the UI
-      function displayOutfit(top, bottom, shoe, coordinationStyle = null, weatherInfo = null) {
-        const outfitDisplay = document.getElementById("outfitDisplay");
-        
-        // Style label for coordination type
-        let styleLabel = '';
-        
-        // Check if we have a color-specific coordination style
-        if (coordinationStyle && coordinationStyle.startsWith('color-coordinated-')) {
-          // Extract the color name from the style
-          const baseColor = coordinationStyle.replace('color-coordinated-', '');
-          styleLabel = `
-            <div class="coordination-badge">
-              <span class="material-symbols-outlined">palette</span>
-              ${baseColor.charAt(0).toUpperCase() + baseColor.slice(1)} Coordinated Outfit
-              <span class="color-dot" style="background-color: ${getColorHex(baseColor)};"></span>
-            </div>
-          `;
-        } else if (coordinationStyle && coordinationStyle.startsWith('occasion-')) {
-          // Extract the occasion name from the style
-          const occasion = coordinationStyle.replace('occasion-', '');
-          
-          // Select appropriate icon for each occasion
-          let occasionIcon = 'event';
-          if (occasion === 'casual') occasionIcon = 'weekend';
-          else if (occasion === 'work/professional') occasionIcon = 'business_center';
-          else if (occasion === 'formal') occasionIcon = 'local_bar';
-          else if (occasion === 'athletic/sport') occasionIcon = 'fitness_center';
-          else if (occasion === 'lounge/sleepwear') occasionIcon = 'hotel';
-          
-          styleLabel = `
-            <div class="coordination-badge occasion-badge">
-              <span class="material-symbols-outlined">${occasionIcon}</span>
-              ${occasion.charAt(0).toUpperCase() + occasion.slice(1)} Outfit
-            </div>
-          `;
-        } else if (coordinationStyle && coordinationStyle.startsWith('weather-')) {
-          // Extract the weather condition from the style
-          const weatherCondition = coordinationStyle.replace('weather-', '');
-          
-          // Get appropriate icon
-          const weatherIcon = getWeatherIcon(weatherCondition);
-          
-          styleLabel = `
-            <div class="coordination-badge weather-badge">
-              <span class="material-symbols-outlined">${weatherIcon}</span>
-              Weather Appropriate Outfit
-            </div>
-          `;
-        } else if (coordinationStyle === 'color-coordinated') {
-          styleLabel = `
-            <div class="coordination-badge">
-              <span class="material-symbols-outlined">palette</span>
-              Color Coordinated
-            </div>
-          `;
-        }
-        
-        // Start building the outfit HTML
-        let outfitHtml = `
-          <div class="outfit">
-            ${styleLabel}
-            <div class="outfit-item">
-              <div class="item-label">Top</div>
-              <img src="${top.image_url}" alt="Top" data-type="top" onclick="enlargeImage(this)">
-            </div>
-            <div class="outfit-item">
-              <div class="item-label">Bottom</div>
-              <img src="${bottom.image_url}" alt="Bottom" data-type="bottom" onclick="enlargeImage(this)">
-            </div>
-            <div class="outfit-item">
-              <div class="item-label">Shoes</div>
-              <img src="${shoe.image_url}" alt="Shoes" data-type="shoe" onclick="enlargeImage(this)">
-            </div>
-        `;
-        
-        // Add weather information if available
-        if (weatherInfo) {
-          outfitHtml += `
-            <div class="weather-outfit-info">
-              <p>Outfit selected for ${weatherInfo.city}: ${weatherInfo.temperature}°F, ${weatherInfo.description}</p>
-            </div>
-          `;
-        }
-        
-        // Close the outfit div and add the save button
-        outfitHtml += `
-          </div>
-          <button id="saveOutfitBtn" class="btn save-btn">
-            <span class="material-symbols-outlined">bookmark</span>
-            Save This Outfit
-          </button>
-        `;
-        
-        // Update the display
-        outfitDisplay.innerHTML = outfitHtml;
-        
-        // Add event listener to the save button if it exists
-        const saveButton = document.getElementById("saveOutfitBtn");
-        if (saveButton) {
-          saveButton.addEventListener("click", function() {
-            saveOutfit(top.id, bottom.id, shoe.id);
-          });
-        }
-      }
       
       // Helper function to get hex code for color name
       function getColorHex(colorName) {
@@ -798,23 +723,7 @@
         
         return colorMap[colorName] || '#888888';
       }
-    
-      // Helper function to get appropriate weather icon
-      function getWeatherIcon(condition) {
-        switch (condition) {
-          case 'sunny':
-            return 'wb_sunny';
-          case 'rainy':
-            return 'rainy';
-          case 'snowy':
-            return 'ac_unit';
-          case 'cloudy':
-            return 'cloud';
-          default:
-            return 'thermostat';
-        }
-      }
-    
+
       // Function to enlarge image when clicked
       function enlargeImage(imgElement) {
         const modal = document.getElementById("imageModal");
@@ -842,19 +751,19 @@
         // Show the modal
         modal.classList.add("show");
       }
-    
+
       // Close modal when clicking the close button or outside the modal content
       document.querySelector(".close-modal").addEventListener("click", function() {
         document.getElementById("imageModal").classList.remove("show");
       });
-    
+
       // Close modal when clicking outside the modal content
       document.getElementById("imageModal").addEventListener("click", function(event) {
         if (event.target === this) {
           this.classList.remove("show");
         }
       });
-    
+
       // Function to save the outfit
       async function saveOutfit(topId, bottomId, shoeId) {
         try {
@@ -890,84 +799,443 @@
           alert("Failed to save outfit. Please try again.");
         }
       }
-    
-      // Function to update weather display
-      function updateWeatherDisplay(weather) {
-        const weatherIcon = getWeatherIcon(weather.condition);
-        
-        document.getElementById('weatherDisplay').innerHTML = `
-          <div class="weather-info">
-            <span class="material-symbols-outlined weather-icon">${weatherIcon}</span>
-            <div class="weather-details">
-              <div class="weather-location">${weather.city}</div>
-              <div class="weather-temperature">${weather.temperature}°F</div>
-              <div class="weather-description">${weather.description}</div>
-            </div>
-          </div>
-        `;
-        
-        document.getElementById('weatherDisplay').style.display = 'block';
-      }
-    
-      // Event listener for the Get Weather button
-      document.addEventListener('DOMContentLoaded', function() {
-        const getWeatherBtn = document.getElementById('getWeatherBtn');
-        if (getWeatherBtn) {
-          getWeatherBtn.addEventListener('click', function() {
-            const cityInput = document.getElementById('cityInput').value.trim();
+
+        // Toggle weather mode options when selected
+        document.querySelectorAll('input[name="generationMode"]').forEach(radioBtn => {
+          radioBtn.addEventListener('change', function() {
+            // Update the active class for all options
+            document.querySelectorAll('.option-btn').forEach(btn => {
+              btn.classList.remove('active');
+            });
+            this.parentElement.classList.add('active');
             
-            if (!cityInput) {
-              alert('Please enter a city name');
+            // Show/hide option sections
+            const randomOptions = document.getElementById('randomOptions');
+            const colorOptions = document.getElementById('colorOptions');
+            const occasionOptions = document.getElementById('occasionOptions');
+            const weatherOptions = document.getElementById('weatherOptions');
+            
+            randomOptions.style.display = 'none';
+            colorOptions.style.display = 'none';
+            occasionOptions.style.display = 'none';
+            weatherOptions.style.display = 'none';
+            
+            if (this.value === 'color') {
+              colorOptions.style.display = 'block';
+              loadUserColorPalette();
+            } else if (this.value === 'occasion') {
+              occasionOptions.style.display = 'block';
+            } else if (this.value === 'weather') {
+              weatherOptions.style.display = 'block';
+            } else {
+              randomOptions.style.display = 'block';
+            }
+          });
+        });
+        
+        // Weather tab functionality
+        document.querySelectorAll('.weather-tab').forEach(tab => {
+          tab.addEventListener('click', function() {
+            // Update active tab
+            document.querySelectorAll('.weather-tab').forEach(t => {
+              t.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            // Show corresponding tab content
+            const tabId = this.getAttribute('data-tab');
+            document.querySelectorAll('.weather-tab-content').forEach(content => {
+              content.style.display = 'none';
+            });
+            document.getElementById(tabId).style.display = 'block';
+            
+            // Clear any existing weather selection
+            clearWeatherSelection();
+          });
+        });
+        
+        // Get weather by location
+        document.getElementById('getWeatherBtn').addEventListener('click', async function() {
+          const locationInput = document.getElementById('locationInput');
+          const location = locationInput.value.trim();
+          
+          if (!location) {
+            alert('Please enter a location (city name or ZIP code).');
+            return;
+          }
+          
+          try {
+            // Show loading indicator
+            this.innerHTML = '<span class="material-symbols-outlined spinning">refresh</span>';
+            this.disabled = true;
+            
+            const response = await fetch('/get_weather', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ location: location })
+            });
+            
+            const result = await response.json();
+            
+            // Reset button
+            this.innerHTML = '<span class="material-symbols-outlined">search</span> Get Weather';
+            this.disabled = false;
+            
+            if (result.success) {
+              // Display weather info
+              document.getElementById('weatherInfo').style.display = 'block';
+              document.getElementById('weatherLocation').textContent = result.location;
+              document.getElementById('weatherTemp').textContent = result.temperature;
+              document.getElementById('weatherCondition').textContent = result.weather_description;
+              
+              // Set weather icon based on condition
+              const weatherIcon = document.getElementById('weatherIcon');
+              switch(result.weather_condition) {
+                case 'sunny':
+                  weatherIcon.textContent = 'sunny';
+                  break;
+                case 'cloudy':
+                  weatherIcon.textContent = 'cloud';
+                  break;
+                case 'rain':
+                  weatherIcon.textContent = 'rainy';
+                  break;
+                case 'snow':
+                  weatherIcon.textContent = 'ac_unit';
+                  break;
+                default:
+                  weatherIcon.textContent = 'thermostat';
+              }
+              
+              // Update the selected weather display
+              document.getElementById('selectedWeatherDisplay').textContent = 
+                `Selected: ${result.temperature}°F, ${result.weather_description}`;
+              document.getElementById('clearWeatherSelection').style.display = 'inline-flex';
+              
+              // Store the weather data for outfit generation
+              weatherData = {
+                temperature: result.temperature,
+                weather_condition: result.weather_condition,
+                weather_description: result.weather_description
+              };
+            } else {
+              alert(`Error: ${result.message}`);
+            }
+          } catch (error) {
+            console.error('Error getting weather:', error);
+            this.innerHTML = '<span class="material-symbols-outlined">search</span> Get Weather';
+            this.disabled = false;
+            alert('Failed to fetch weather data. Please try again.');
+          }
+        });
+        
+        // Manual weather condition selection
+        document.querySelectorAll('.weather-condition-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            // Toggle active state
+            document.querySelectorAll('.weather-condition-btn').forEach(b => {
+              b.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            updateManualWeatherSelection();
+          });
+        });
+        
+        // Temperature input change
+        document.getElementById('temperatureInput').addEventListener('input', function() {
+          updateManualWeatherSelection();
+        });
+        
+        // Update manual weather selection
+        function updateManualWeatherSelection() {
+          const selectedConditionBtn = document.querySelector('.weather-condition-btn.active');
+          const temperatureInput = document.getElementById('temperatureInput');
+          
+          if (selectedConditionBtn && temperatureInput.value) {
+            const condition = selectedConditionBtn.getAttribute('data-condition');
+            const temperature = parseInt(temperatureInput.value);
+            
+            // Update the selected weather display
+            document.getElementById('selectedWeatherDisplay').textContent = 
+              `Selected: ${temperature}°F, ${condition.charAt(0).toUpperCase() + condition.slice(1)}`;
+            document.getElementById('clearWeatherSelection').style.display = 'inline-flex';
+            
+            // Store the weather data for outfit generation
+            weatherData = {
+              temperature: temperature,
+              weather_condition: condition,
+              weather_description: condition
+            };
+          } else {
+            document.getElementById('selectedWeatherDisplay').textContent = 'No weather conditions selected';
+            document.getElementById('clearWeatherSelection').style.display = 'none';
+            weatherData = null;
+          }
+        }
+        
+        // Clear weather selection
+        document.getElementById('clearWeatherSelection').addEventListener('click', function() {
+          clearWeatherSelection();
+        });
+        
+        function clearWeatherSelection() {
+          // Reset location tab
+          document.getElementById('weatherInfo').style.display = 'none';
+          document.getElementById('locationInput').value = '';
+          
+          // Reset manual tab
+          document.querySelectorAll('.weather-condition-btn').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          document.getElementById('temperatureInput').value = '70';
+          
+          // Reset selection info
+          document.getElementById('selectedWeatherDisplay').textContent = 'No weather conditions selected';
+          document.getElementById('clearWeatherSelection').style.display = 'none';
+          
+          // Clear weather data
+          weatherData = null;
+        }
+        
+        // Global variable to store weather data
+        let weatherData = null;
+        
+        // Modify the generateOutfit function to handle weather-based generation
+        async function generateOutfit() {
+          const mode = document.querySelector('input[name="generationMode"]:checked').value;
+          
+          if (mode === 'random') {
+            await generateRandomOutfit();
+          } else if (mode === 'color') {
+            await generateColorOutfit();
+          } else if (mode === 'occasion') {
+            await generateOccasionOutfit();
+          } else if (mode === 'weather') {
+            await generateWeatherOutfit();
+          }
+        }
+        
+        // Add the weather-based outfit generation function
+        async function generateWeatherOutfit() {
+          const outfitDisplay = document.getElementById("outfitDisplay");
+          
+          try {
+            // Check if weather data is available
+            if (!weatherData) {
+              outfitDisplay.innerHTML = `
+                <div class="alert alert-warning">
+                  <span class="material-symbols-outlined">thermostat</span>
+                  <span>Please select weather conditions first.</span>
+                </div>
+              `;
               return;
             }
             
             // Show loading state
-            const weatherDisplay = document.getElementById('weatherDisplay');
-            weatherDisplay.style.display = 'block';
-            weatherDisplay.innerHTML = `
+            outfitDisplay.innerHTML = `
               <div class="loading-spinner">
                 <span class="material-symbols-outlined spinning">refresh</span>
-                <p>Getting weather data...</p>
+                <p>Generating weather-based outfit for ${weatherData.temperature}°F, ${weatherData.weather_description}...</p>
               </div>
             `;
             
-            // Make API request to backend
-            fetch('/generate_weather_outfit', {
+            const response = await fetch('/generate_weather_outfit', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                city: cityInput
+                temperature: weatherData.temperature,
+                weather_condition: weatherData.weather_condition
               })
-            })
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                // Update weather display
-                updateWeatherDisplay(data.weather);
-              } else {
-                weatherDisplay.innerHTML = `
-                  <div class="alert alert-warning">
-                    <span class="material-symbols-outlined">warning</span>
-                    <span>${data.message}</span>
-                  </div>
-                `;
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+              // Store current outfit
+              currentOutfit.top = result.top;
+              currentOutfit.bottom = result.bottom;
+              currentOutfit.shoe = result.shoes;
+              
+              // Create weather badge based on condition
+              let weatherIcon = '';
+              switch (weatherData.weather_condition) {
+                case 'sunny':
+                  weatherIcon = 'sunny';
+                  break;
+                case 'cloudy':
+                  weatherIcon = 'cloud';
+                  break;
+                case 'rain':
+                  weatherIcon = 'rainy';
+                  break;
+                case 'snow':
+                  weatherIcon = 'ac_unit';
+                  break;
+                default:
+                  weatherIcon = 'thermostat';
               }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              weatherDisplay.innerHTML = `
+              
+              // Display the outfit with weather information
+              displayOutfit(
+                result.top, 
+                result.bottom, 
+                result.shoes, 
+                `weather-${weatherData.weather_condition}`,
+                `<span class="material-symbols-outlined">${weatherIcon}</span> ${weatherData.temperature}°F, ${weatherData.weather_description}`
+              );
+            } else {
+              outfitDisplay.innerHTML = `
                 <div class="alert alert-warning">
-                  <span class="material-symbols-outlined">error</span>
-                  <span>Failed to get weather data. Please try again.</span>
+                  <span class="material-symbols-outlined">warning</span>
+                  <span>${result.message}</span>
                 </div>
               `;
-            });
-          });
+            }
+          } catch (error) {
+            console.error("Error generating outfit:", error);
+            outfitDisplay.innerHTML = `
+              <div class="alert alert-warning">
+                <span class="material-symbols-outlined">error</span>
+                <span>Failed to generate outfit. Please try again.</span>
+              </div>
+            `;
+          }
         }
-      });
-    
+        
+        // Display outfit in the UI
+        function displayOutfit(top, bottom, shoe, coordinationStyle = null, customBadgeContent = null) {
+          const outfitDisplay = document.getElementById("outfitDisplay");
+          
+          // Check if this is a complete top outfit (dress/jumpsuit/etc.)
+          const isCompleteTop = !bottom || top.is_complete_top === true;
+          
+          // Style label for coordination type
+          let styleLabel = '';
+          
+          // Check if we have a color-specific coordination style
+          if (coordinationStyle && coordinationStyle.startsWith('color-coordinated-')) {
+            // Extract the color name from the style
+            const baseColor = coordinationStyle.replace('color-coordinated-', '');
+            styleLabel = `
+              <div class="coordination-badge">
+                <span class="material-symbols-outlined">palette</span>
+                ${baseColor.charAt(0).toUpperCase() + baseColor.slice(1)} Coordinated Outfit
+                <span class="color-dot" style="background-color: ${getColorHex(baseColor)};"></span>
+              </div>
+            `;
+          } else if (coordinationStyle && coordinationStyle.startsWith('occasion-')) {
+            // Extract the occasion name from the style
+            const occasion = coordinationStyle.replace('occasion-', '');
+            
+            // Select appropriate icon for each occasion
+            let occasionIcon = 'event';
+            if (occasion === 'casual') occasionIcon = 'weekend';
+            else if (occasion === 'work/professional') occasionIcon = 'business_center';
+            else if (occasion === 'formal') occasionIcon = 'local_bar';
+            else if (occasion === 'athletic/sport') occasionIcon = 'fitness_center';
+            else if (occasion === 'lounge/sleepwear') occasionIcon = 'hotel';
+            
+            styleLabel = `
+              <div class="coordination-badge occasion-badge">
+                <span class="material-symbols-outlined">${occasionIcon}</span>
+                ${occasion.charAt(0).toUpperCase() + occasion.slice(1)} Outfit
+              </div>
+            `;
+          } else if (coordinationStyle && coordinationStyle.startsWith('weather-')) {
+            // Extract the weather condition from the style
+            const weatherCondition = coordinationStyle.replace('weather-', '');
+            
+            // Use custom badge content if provided, otherwise create a standard one
+            if (customBadgeContent) {
+              styleLabel = `
+                <div class="coordination-badge weather-badge">
+                  ${customBadgeContent}
+                </div>
+              `;
+            } else {
+              // Select appropriate icon for each weather condition
+              let weatherIcon = 'thermostat';
+              if (weatherCondition === 'sunny') weatherIcon = 'sunny';
+              else if (weatherCondition === 'cloudy') weatherIcon = 'cloud';
+              else if (weatherCondition === 'rain') weatherIcon = 'rainy';
+              else if (weatherCondition === 'snow') weatherIcon = 'ac_unit';
+              
+              styleLabel = `
+                <div class="coordination-badge weather-badge">
+                  <span class="material-symbols-outlined">${weatherIcon}</span>
+                  ${weatherCondition.charAt(0).toUpperCase() + weatherCondition.slice(1)} Weather Outfit
+                </div>
+              `;
+            }
+          } else if (coordinationStyle === 'color-coordinated') {
+            styleLabel = `
+              <div class="coordination-badge">
+                <span class="material-symbols-outlined">palette</span>
+                Color Coordinated
+              </div>
+            `;
+          }
+          
+          // Build the outfit HTML
+          let outfitHtml = `
+            <div class="outfit">
+              ${styleLabel}
+              <div class="outfit-item">
+                <div class="item-label">${isCompleteTop ? 'Dress/Complete' : 'Top'}</div>
+                <div class="item-image-container">
+                  ${top.unavailable ? '<div class="unavailable-outfit-badge tooltip"><span class="material-symbols-outlined">do_not_disturb_on</span><span class="tooltip-text">This item is unavailable/dirty</span></div>' : ''}
+                  <img src="${top.image_url}" alt="Top" data-type="top" onclick="enlargeImage(this)">
+                </div>
+              </div>
+          `;
+          
+          // Only include bottom section if this is not a complete top
+          if (!isCompleteTop) {
+            outfitHtml += `
+              <div class="outfit-item">
+                <div class="item-label">Bottom</div>
+                <div class="item-image-container">
+                  ${bottom && bottom.unavailable ? '<div class="unavailable-outfit-badge tooltip"><span class="material-symbols-outlined">do_not_disturb_on</span><span class="tooltip-text">This item is unavailable/dirty</span></div>' : ''}
+                  <img src="${bottom.image_url}" alt="Bottom" data-type="bottom" onclick="enlargeImage(this)">
+                </div>
+              </div>
+            `;
+          }
+          
+          // Complete the outfit HTML with shoes and save button
+          outfitHtml += `
+              <div class="outfit-item">
+                <div class="item-label">Shoes</div>
+                <div class="item-image-container">
+                  ${shoe.unavailable ? '<div class="unavailable-outfit-badge tooltip"><span class="material-symbols-outlined">do_not_disturb_on</span><span class="tooltip-text">This item is unavailable/dirty</span></div>' : ''}
+                  <img src="${shoe.image_url}" alt="Shoes" data-type="shoe" onclick="enlargeImage(this)">
+                </div>
+              </div>
+            </div>
+            <button id="saveOutfitBtn" class="btn save-btn">
+              <span class="material-symbols-outlined">bookmark</span>
+              Save This Outfit
+            </button>
+          `;
+          
+          // Update the display
+          outfitDisplay.innerHTML = outfitHtml;
+          
+          // Add event listener to the save button if it exists
+          const saveButton = document.getElementById("saveOutfitBtn");
+          if (saveButton) {
+            saveButton.addEventListener("click", function() {
+              // Pass bottom ID as null for complete tops
+              saveOutfit(top.id, isCompleteTop ? null : bottom.id, shoe.id);
+            });
+          }
+        }
+
       // Main generation function based on selected mode
       async function generateOutfit() {
         const mode = document.querySelector('input[name="generationMode"]:checked').value;
@@ -989,24 +1257,21 @@
         document.getElementById('randomOptions').style.display = 'block';
         document.getElementById('colorOptions').style.display = 'none';
         document.getElementById('occasionOptions').style.display = 'none';
-        document.getElementById('weatherOptions').style.display = 'none';
         
         // Set up clear selection button for color mode
         const clearColorBtn = document.getElementById('clearColorSelection');
-        if (clearColorBtn) {
-          clearColorBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.querySelectorAll('.color-chip').forEach(c => c.classList.remove('selected'));
-            document.getElementById('selectedColorDisplay').textContent = "No color selected";
-            this.style.display = 'none';
-          });
-        }
+        clearColorBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          document.querySelectorAll('.color-chip').forEach(c => c.classList.remove('selected'));
+          document.getElementById('selectedColorDisplay').textContent = "No color selected";
+          this.style.display = 'none';
+        });
         
         // Set up occasion button listeners
         setupOccasionButtonListeners();
       });
-    
+
       document
         .getElementById("generateBtn")
         .addEventListener("click", generateOutfit);

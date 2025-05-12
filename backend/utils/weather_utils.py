@@ -2,92 +2,149 @@
 import requests
 import math
 
-def get_weather_data(city_name, api_key):
+def get_weather_by_location(location, api_key):
     """
-    Get current weather data from OpenWeatherMap API
+    Get weather information for a specific location using OpenWeather API
+    Returns weather data including temperature and weather condition
     
     Args:
-        city_name (str): Name of the city to get weather for
-        api_key (str): OpenWeatherMap API key
+        location (str): City name or zip code
+        api_key (str): OpenWeather API key
         
     Returns:
-        dict: Weather data or None if request failed
+        dict: Weather data or None if request fails
     """
-    base_url = "https://api.openweathermap.org/data/2.5/weather"
-    params = {
-        "q": city_name,
-        "appid": api_key,
-        "units": "imperial"  # For temperature in Fahrenheit
-    }
-    
     try:
-        response = requests.get(base_url, params=params)
-        
-        if response.status_code == 200:
-            weather_data = response.json()
-            
-            # Round temperature to nearest whole number
-            if "main" in weather_data and "temp" in weather_data["main"]:
-                weather_data["main"]["temp"] = round(weather_data["main"]["temp"])
-                
-            return weather_data
+        # Check if the location is a US zip code
+        if location.isdigit() and len(location) == 5:
+            # US zip code
+            url = f"https://api.openweathermap.org/data/2.5/weather?zip={location},us&appid={api_key}&units=imperial"
         else:
-            print(f"Error getting weather data: {response.status_code}")
-            return None
+            # City name
+            url = f"https://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}&units=imperial"
+            
+        response = requests.get(url)
+        response.raise_for_status()  # Raise exception for HTTP errors
+        
+        weather_data = response.json()
+        
+        # Round temperature to nearest whole number
+        if 'main' in weather_data and 'temp' in weather_data['main']:
+            weather_data['main']['temp'] = round(weather_data['main']['temp'])
+        
+        return weather_data
     except Exception as e:
-        print(f"Exception during weather API call: {e}")
+        print(f"Error fetching weather data: {e}")
         return None
 
-def categorize_weather(weather_data):
+def get_weather_condition_by_id(weather_id):
     """
-    Categorize weather data into temperature range and conditions
+    Map OpenWeather condition ID to simplified condition name
     
     Args:
-        weather_data (dict): Weather data from OpenWeatherMap API
+        weather_id (int): OpenWeather condition ID
         
     Returns:
-        dict: Categorized weather data
+        str: Simplified weather condition (sunny, cloudy, rain, snow, etc.)
     """
-    if not weather_data or "main" not in weather_data:
-        return None
+    # Weather ID ranges based on OpenWeather API documentation
+    # https://openweathermap.org/weather-conditions
     
-    temp = weather_data["main"]["temp"]
-    conditions = weather_data["weather"][0]["main"].lower()
+    # Thunderstorm
+    if 200 <= weather_id < 300:
+        return "rain"  # Simplify thunderstorm to rain
     
-    # Categorize temperature
-    if temp < 50:
-        temp_category = "cold"
-    elif temp < 65:
-        temp_category = "cool"
-    elif temp < 75:
-        temp_category = "mild"
-    elif temp < 85:
-        temp_category = "warm"
+    # Drizzle and Rain
+    elif 300 <= weather_id < 600:
+        return "rain"
+    
+    # Snow
+    elif 600 <= weather_id < 700:
+        return "snow"
+    
+    # Atmosphere conditions (mist, fog, etc.)
+    elif 700 <= weather_id < 800:
+        return "cloudy"
+    
+    # Clear
+    elif weather_id == 800:
+        return "sunny"
+    
+    # Clouds
+    elif 801 <= weather_id < 900:
+        return "cloudy"
+    
+    # Default
     else:
-        temp_category = "hot"
+        return "other"
+
+def get_season_by_month(month):
+    """
+    Determine the season based on the month (Northern Hemisphere)
     
-    # Simplify weather conditions
-    if conditions in ["thunderstorm", "drizzle", "rain"]:
-        weather_condition = "rainy"
-    elif conditions == "snow":
-        weather_condition = "snowy"
-    elif conditions == "clear":
-        weather_condition = "sunny"
-    elif conditions in ["clouds", "mist", "smoke", "haze", "dust", "fog"]:
-        weather_condition = "cloudy"
-    else:
-        weather_condition = "normal"  # Default case
+    Args:
+        month (int): Month as number (1-12)
+        
+    Returns:
+        str: Season name (winter, spring, summer, fall)
+    """
+    if month in [12, 1, 2]:
+        return "winter"
+    elif month in [3, 4, 5]:
+        return "spring"
+    elif month in [6, 7, 8]:
+        return "summer"
+    else:  # 9, 10, 11
+        return "fall"
+
+def determine_outfit_type_by_weather(temp, condition):
+    """
+    Determine what type of outfit is appropriate based on temperature and weather condition
+    Using updated temperature ranges:
+    - Cold: 0-39°F - Heavy insulation needed
+    - Cool: 40-59°F - Medium insulation needed
+    - Warm: 60-79°F - Light layers appropriate
+    - Hot: 80+°F - Minimal, breathable clothing
     
-    # Check if it's windy
-    is_windy = False
-    if "wind" in weather_data and "speed" in weather_data["wind"]:
-        if weather_data["wind"]["speed"] > 15:  # Wind speed greater than 15 mph
-            is_windy = True
-            
-    return {
-        "temperature": temp,
-        "temp_category": temp_category,
-        "weather_condition": weather_condition,
-        "is_windy": is_windy,
-        "original_condition": conditions
+    Args:
+        temp (float): Temperature in Fahrenheit
+        condition (str): Weather condition (sunny, cloudy, rain, snow, etc.)
+        
+    Returns:
+        dict: Dictionary with recommended outfit characteristics
+    """
+    outfit_type = {
+        "temp_range": "",
+        "layers": 0,
+        "characteristics": []
     }
+    
+    # Determine temperature range using the updated ranges
+    if temp <= 39:
+        outfit_type["temp_range"] = "cold"
+        outfit_type["layers"] = 3
+        outfit_type["characteristics"] = ["warm", "insulated", "layered"]
+    elif temp <= 59:
+        outfit_type["temp_range"] = "cool"
+        outfit_type["layers"] = 2
+        outfit_type["characteristics"] = ["warm", "light layered"]
+    elif temp <= 79:
+        outfit_type["temp_range"] = "warm"
+        outfit_type["layers"] = 1
+        outfit_type["characteristics"] = ["comfortable", "breathable"]
+    else:  # temp >= 80
+        outfit_type["temp_range"] = "hot"
+        outfit_type["layers"] = 1
+        outfit_type["characteristics"] = ["light", "breathable", "loose"]
+    
+    # Add condition-specific characteristics
+    if condition == "rain":
+        outfit_type["characteristics"].extend(["waterproof", "rain-appropriate"])
+    elif condition == "snow":
+        outfit_type["characteristics"].extend(["snow-appropriate", "waterproof", "insulated"])
+    elif condition == "sunny" and temp >= 80:
+        outfit_type["characteristics"].extend(["sun-protective", "light-colored"])
+    elif condition == "cloudy" and temp <= 59:
+        outfit_type["characteristics"].append("windproof")
+    
+    return outfit_type

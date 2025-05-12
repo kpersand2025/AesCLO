@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols-Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
       rel="stylesheet"
     />
     <link
@@ -75,13 +75,15 @@
               <h3>{{ outfit.name }}</h3>
               <div class="outfit-preview">
                 <div class="outfit-item">
-                  <div class="item-label">Top</div>
+                  <div class="item-label">{{ 'Dress/Complete' if outfit.is_complete_top else 'Top' }}</div>
                   <img src="{{ outfit.top_image }}" alt="Top" onclick="enlargeImage(this)" data-type="top" data-info="{{ outfit.name }}" />
                 </div>
+                {% if not outfit.is_complete_top %}
                 <div class="outfit-item">
                   <div class="item-label">Bottom</div>
                   <img src="{{ outfit.bottom_image }}" alt="Bottom" onclick="enlargeImage(this)" data-type="bottom" data-info="{{ outfit.name }}" />
                 </div>
+                {% endif %}
                 <div class="outfit-item">
                   <div class="item-label">Shoes</div>
                   <img src="{{ outfit.shoe_image }}" alt="Shoes" onclick="enlargeImage(this)" data-type="shoe" data-info="{{ outfit.name }}" />
@@ -132,7 +134,9 @@
         enlargedImage.src = imgElement.src;
         
         // Display item details
-        let detailsHtml = `<h3>${itemType.charAt(0).toUpperCase() + itemType.slice(1)}</h3>`;
+        let detailsHtml = `<h3>${itemType === "top" && imgElement.closest(".outfit-preview").querySelector(".item-label").textContent === "Dress/Complete" ? 
+                             "Dress/Complete" : 
+                             itemType.charAt(0).toUpperCase() + itemType.slice(1)}</h3>`;
         detailsHtml += `<p>From outfit: ${outfitName}</p>`;
         itemDetails.innerHTML = detailsHtml;
         

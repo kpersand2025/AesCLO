@@ -112,7 +112,7 @@
             .then((data) => {
               if (data.message) {
                 message.style.color =
-                  data.message === "You have successfully created an account!"
+                  data.message === "Account created successfully!"
                     ? "green"
                     : "red";
                 message.textContent = data.message;
@@ -150,8 +150,9 @@
         });
 
       function validatePassword(password) {
+        // Fixed regex with proper escaping for the lookahead assertions
         let regex =
-          /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         return regex.test(password);
       }
 
@@ -159,7 +160,7 @@
         if (password.length < 8) {
           return "weak";
         }
-        if (password.match(/(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%*?&])/)) {
+        if (password.match(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/)) {
           return "strong";
         }
         return "medium";

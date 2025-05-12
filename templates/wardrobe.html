@@ -57,6 +57,12 @@
         </p>
         
         <div class="wardrobe-actions">
+          <div class="filter-options">
+            <label class="filter-label">
+              <input type="checkbox" id="showUnavailable" checked>
+              Show Unavailable Items
+            </label>
+          </div>
           <button id="clearWardrobeBtn" class="btn clear-wardrobe-btn">
             <span class="material-symbols-outlined">delete_sweep</span>
             Clear Wardrobe
@@ -69,7 +75,17 @@
             <h2>Tops</h2>
             <div class="category" id="tops">
               {% for item in wardrobe_items if item.category == 'top' %}
-              <div class="wardrobe-item" onclick="enlargeImage(this)">
+              <div class="wardrobe-item{% if item.unavailable %} unavailable{% endif %}" onclick="handleItemClick(event, this)" 
+                   data-colors="{{ item.colors | tojson | forceescape }}"
+                   data-occasions="{{ item.occasions | tojson | forceescape }}"
+                   data-id="{{ item.item_id }}"
+                   data-category="{{ item.category }}"
+                   data-unavailable="{{ item.unavailable | default(false) | tojson }}">
+                {% if item.unavailable %}
+                <div class="unavailable-badge">
+                  <span class="material-symbols-outlined">do_not_disturb_on</span>
+                </div>
+                {% endif %}
                 <img src="{{ item.image_url }}" alt="Top" class="wardrobe-image" data-id="{{ item.item_id }}" data-category="top" />
                 {% if item.color or item.brand %}
                 <div class="item-info">
@@ -87,7 +103,17 @@
             <h2>Bottoms</h2>
             <div class="category" id="bottoms">
               {% for item in wardrobe_items if item.category == 'bottom' %}
-              <div class="wardrobe-item" onclick="enlargeImage(this)">
+              <div class="wardrobe-item{% if item.unavailable %} unavailable{% endif %}" onclick="handleItemClick(event, this)" 
+                   data-colors="{{ item.colors | tojson | forceescape }}"
+                   data-occasions="{{ item.occasions | tojson | forceescape }}"
+                   data-id="{{ item.item_id }}"
+                   data-category="{{ item.category }}"
+                   data-unavailable="{{ item.unavailable | default(false) | tojson }}">
+                {% if item.unavailable %}
+                <div class="unavailable-badge">
+                  <span class="material-symbols-outlined">do_not_disturb_on</span>
+                </div>
+                {% endif %}
                 <img src="{{ item.image_url }}" alt="Bottom" class="wardrobe-image" data-id="{{ item.item_id }}" data-category="bottom" />
                 {% if item.color or item.brand %}
                 <div class="item-info">
@@ -105,8 +131,59 @@
             <h2>Shoes</h2>
             <div class="category" id="shoes">
               {% for item in wardrobe_items if item.category == 'shoes' %}
-              <div class="wardrobe-item" onclick="enlargeImage(this)">
+              <div class="wardrobe-item{% if item.unavailable %} unavailable{% endif %}" onclick="handleItemClick(event, this)" 
+                   data-colors="{{ item.colors | tojson | forceescape }}"
+                   data-occasions="{{ item.occasions | tojson | forceescape }}"
+                   data-id="{{ item.item_id }}"
+                   data-category="{{ item.category }}"
+                   data-unavailable="{{ item.unavailable | default(false) | tojson }}">
+                {% if item.unavailable %}
+                <div class="unavailable-badge">
+                  <span class="material-symbols-outlined">do_not_disturb_on</span>
+                </div>
+                {% endif %}
                 <img src="{{ item.image_url }}" alt="Shoes" class="wardrobe-image" data-id="{{ item.item_id }}" data-category="shoes" />
+                {% if item.color or item.brand %}
+                <div class="item-info">
+                  {% if item.color %}<span class="item-color">{{ item.color }}</span>{% endif %}
+                  {% if item.brand %}<span class="item-brand">{{ item.brand }}</span>{% endif %}
+                </div>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Accessories Section -->
+          <div class="category-section accessories-section">
+            <h2>Accessories</h2>
+            
+            <!-- Filter tabs for accessories -->
+            <div class="accessories-filter">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="jewelry">Jewelry</button>
+              <button class="filter-btn" data-filter="winter">Winter</button>
+              <button class="filter-btn" data-filter="bags">Bags</button>
+              <button class="filter-btn" data-filter="headwear">Headwear</button>
+              <button class="filter-btn" data-filter="other">Other</button>
+            </div>
+            
+            <div class="category" id="accessories">
+              {% for item in wardrobe_items if item.category == 'accessory' %}
+              <div class="wardrobe-item accessory-item{% if item.unavailable %} unavailable{% endif %}" onclick="handleItemClick(event, this)" 
+                   data-colors="{{ item.colors | tojson | forceescape }}"
+                   data-occasions="{{ item.occasions | tojson | forceescape }}"
+                   data-subcategory="{{ item.subcategory or 'other' }}"
+                   data-id="{{ item.item_id }}"
+                   data-category="{{ item.category }}"
+                   data-unavailable="{{ item.unavailable | default(false) | tojson }}">
+                <div class="accessory-badge">{{ item.subcategory or 'other' }}</div>
+                {% if item.unavailable %}
+                <div class="unavailable-badge">
+                  <span class="material-symbols-outlined">do_not_disturb_on</span>
+                </div>
+                {% endif %}
+                <img src="{{ item.image_url }}" alt="Accessory" class="wardrobe-image" data-id="{{ item.item_id }}" data-category="accessory" />
                 {% if item.color or item.brand %}
                 <div class="item-info">
                   {% if item.color %}<span class="item-color">{{ item.color }}</span>{% endif %}
@@ -121,6 +198,22 @@
       </div>
     </section>
 
+    <!-- Context menu for item actions -->
+    <div id="contextMenu" class="context-menu">
+      <div class="context-menu-option toggle-availability">
+        <span class="material-symbols-outlined availability-icon">do_not_disturb_on</span>
+        <span class="availability-text">Mark as Unavailable</span>
+      </div>
+      <div class="context-menu-option view-details">
+        <span class="material-symbols-outlined">visibility</span>
+        <span>View Details</span>
+      </div>
+      <div class="context-menu-option remove-item">
+        <span class="material-symbols-outlined">delete</span>
+        <span>Remove</span>
+      </div>
+    </div>
+
     <!-- Image enlargement modal -->
     <div id="imageModal" class="modal">
       <div class="modal-content">
@@ -130,6 +223,10 @@
         <img id="enlargedImage" class="modal-image" src="" alt="Enlarged clothing item">
         <div id="itemDetails" class="item-details"></div>
         <div class="modal-actions">
+          <button id="toggleAvailabilityBtn" class="btn toggle-btn">
+            <span class="material-symbols-outlined availability-modal-icon">do_not_disturb_on</span>
+            <span class="availability-modal-text">Mark as Unavailable</span>
+          </button>
           <button id="removeItemBtn" class="btn remove-btn">
             <span class="material-symbols-outlined">delete</span>
             Remove
@@ -143,44 +240,290 @@
     </footer>
 
     <script>
+      // Global variable to store the currently selected item ID
+      let currentItemId = null;
+      let currentItemCategory = null;
+      let currentContextItem = null;
+
+      // Function to handle item clicks - distinguishes between right and left clicks
+      function handleItemClick(event, itemElement) {
+        // Prevent default behavior for right clicks
+        if (event.button === 2 || event.ctrlKey) {
+          event.preventDefault();
+          showContextMenu(event, itemElement);
+          return;
+        }
+        
+        // For left clicks, just use the regular enlarge image function
+        enlargeImage(itemElement);
+      }
+      
+      // Function to show context menu
+      function showContextMenu(event, itemElement) {
+        event.preventDefault();
+        
+        // Store reference to the current item
+        currentContextItem = itemElement;
+        currentItemId = itemElement.getAttribute('data-id');
+        currentItemCategory = itemElement.getAttribute('data-category');
+        
+        // Update context menu options based on item's unavailable status
+        const isUnavailable = itemElement.getAttribute('data-unavailable') === 'true';
+        const availabilityIcon = document.querySelector('.availability-icon');
+        const availabilityText = document.querySelector('.availability-text');
+        
+        if (isUnavailable) {
+          availabilityIcon.textContent = 'check_circle';
+          availabilityText.textContent = 'Mark as Available';
+        } else {
+          availabilityIcon.textContent = 'do_not_disturb_on';
+          availabilityText.textContent = 'Mark as Unavailable';
+        }
+        
+        // Position and show the context menu
+        const contextMenu = document.getElementById('contextMenu');
+        contextMenu.style.left = `${event.pageX}px`;
+        contextMenu.style.top = `${event.pageY}px`;
+        contextMenu.classList.add('visible');
+        
+        // Add click listener to document to close the menu when clicking outside
+        setTimeout(() => {
+          document.addEventListener('click', closeContextMenu);
+        }, 0);
+      }
+      
+      // Function to close the context menu
+      function closeContextMenu() {
+        const contextMenu = document.getElementById('contextMenu');
+        contextMenu.classList.remove('visible');
+        document.removeEventListener('click', closeContextMenu);
+      }
+      
+      // Function to toggle item availability via context menu
+      document.querySelector('.toggle-availability').addEventListener('click', function() {
+        if (currentContextItem && currentItemId) {
+          toggleItemAvailability(currentItemId, currentItemCategory, currentContextItem);
+        }
+      });
+      
+      // Function to view details via context menu
+      document.querySelector('.view-details').addEventListener('click', function() {
+        if (currentContextItem) {
+          enlargeImage(currentContextItem);
+        }
+      });
+      
+      // Function to remove item via context menu
+      document.querySelector('.remove-item').addEventListener('click', function() {
+        if (currentItemId) {
+          removeItem(currentItemId);
+        }
+      });
+
+      // Function to toggle item availability
+      function toggleItemAvailability(itemId, category, itemElement) {
+        // Get current unavailable status
+        const isCurrentlyUnavailable = itemElement.getAttribute('data-unavailable') === 'true';
+        const newStatus = !isCurrentlyUnavailable;
+        
+        // Send request to update item availability
+        fetch(`/toggle_item_availability/${itemId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify({
+            unavailable: newStatus
+          })
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            // Update the UI to reflect the new status
+            itemElement.setAttribute('data-unavailable', newStatus.toString());
+            
+            if (newStatus) {
+              // Add unavailable badge if not present
+              if (!itemElement.querySelector('.unavailable-badge')) {
+                const badge = document.createElement('div');
+                badge.className = 'unavailable-badge';
+                badge.innerHTML = '<span class="material-symbols-outlined">do_not_disturb_on</span>';
+                itemElement.appendChild(badge);
+              }
+              itemElement.classList.add('unavailable');
+            } else {
+              // Remove unavailable badge if present
+              const badge = itemElement.querySelector('.unavailable-badge');
+              if (badge) {
+                itemElement.removeChild(badge);
+              }
+              itemElement.classList.remove('unavailable');
+            }
+          } else {
+            alert("Error updating item: " + data.message);
+          }
+        })
+        .catch(error => {
+          console.error("Error updating item availability:", error);
+          alert("Failed to update item status. Please try again.");
+        });
+      }
+
       // Function to enlarge image when clicked
       function enlargeImage(itemElement) {
         const modal = document.getElementById("imageModal");
         const enlargedImage = document.getElementById("enlargedImage");
         const itemDetails = document.getElementById("itemDetails");
         const imgElement = itemElement.querySelector(".wardrobe-image");
-        const itemId = imgElement.getAttribute("data-id");
-        const category = imgElement.getAttribute("data-category");
+        const itemId = itemElement.getAttribute("data-id");
+        const category = itemElement.getAttribute("data-category");
+        const isUnavailable = itemElement.getAttribute("data-unavailable") === "true";
+        
+        // Update global references
+        currentItemId = itemId;
+        currentItemCategory = category;
         
         // Set the source of the enlarged image
         enlargedImage.src = imgElement.src;
         
-        // Get additional info if available
-        const itemInfo = itemElement.querySelector(".item-info");
+        // Get additional info
+        const colorsData = itemElement.getAttribute("data-colors");
+        const occasionsData = itemElement.getAttribute("data-occasions");
         
-        // Display item details if available
-        let detailsHtml = `<h3>${category.charAt(0).toUpperCase() + category.slice(1)}</h3>`;
+        // For accessories, get the subcategory
+        let subcategory = "";
+        if (category === "accessory") {
+          subcategory = itemElement.getAttribute("data-subcategory") || "other";
+        }
         
-        if (itemInfo) {
-          const color = itemElement.querySelector(".item-color");
-          const brand = itemElement.querySelector(".item-brand");
-          
-          if (color) {
-            detailsHtml += `<p>Color: ${color.textContent}</p>`;
+        // Parse the JSON data
+        let colors = [];
+        let occasions = [];
+        
+        try {
+          if (colorsData) {
+            const parsedColors = JSON.parse(colorsData);
+            // Extract unique color names
+            const uniqueColors = new Set();
+            parsedColors.forEach(colorObj => {
+              if (colorObj.name && colorObj.name.toLowerCase() !== 'unknown') {
+                uniqueColors.add(colorObj.name.toLowerCase());
+              }
+            });
+            colors = Array.from(uniqueColors);
           }
           
+          if (occasionsData) {
+            occasions = JSON.parse(occasionsData) || [];
+          }
+        } catch (e) {
+          console.error("Error parsing JSON data:", e);
+        }
+        
+        // Display item details
+        let detailsHtml = '';
+        
+        // Display category, subcategory for accessories, colors, occasions, and status on the same row
+        detailsHtml += `<div class="detail-section-row">
+          <div class="detail-section">
+            <strong>Category:</strong> 
+            <div class="category-badge">
+              ${category.charAt(0).toUpperCase() + category.slice(1)}
+              ${category === "accessory" && subcategory ? ` - ${subcategory.charAt(0).toUpperCase() + subcategory.slice(1)}` : ""}
+            </div>
+          </div>
+          <div class="detail-section">
+            <strong>Colors:</strong> 
+            <div class="color-chips">
+              ${colors.length > 0 ? colors.map(color => `
+                <span class="color-chip" style="background-color: ${getColorHex(color)}">
+                  ${color.charAt(0).toUpperCase() + color.slice(1)}
+                </span>
+              `).join('') : '<span class="no-data">No colors detected</span>'}
+            </div>
+          </div>
+          <div class="detail-section">
+            <strong>Occasions:</strong> 
+            <div class="occasion-tags">
+              ${occasions.length > 0 ? occasions.map(occasion => `
+                <span class="occasion-tag">
+                  ${occasion.charAt(0).toUpperCase() + occasion.slice(1)}
+                </span>
+              `).join('') : '<span class="no-data">No occasions detected</span>'}
+            </div>
+          </div>
+          <div class="detail-section">
+            <strong>Status:</strong>
+            <div class="status-badge ${isUnavailable ? 'unavailable-status' : 'available-status'}">
+              ${isUnavailable ? 'Unavailable/Dirty' : 'Available/Clean'}
+            </div>
+          </div>
+        </div>`;
+        
+        // Add brand info if available
+        const itemInfo = itemElement.querySelector(".item-info");
+        if (itemInfo) {
+          const brand = itemElement.querySelector(".item-brand");
           if (brand) {
-            detailsHtml += `<p>Brand: ${brand.textContent}</p>`;
+            detailsHtml += `<div class="detail-section">
+              <strong>Brand:</strong> ${brand.textContent}
+            </div>`;
           }
         }
         
         itemDetails.innerHTML = detailsHtml;
+        
+        // Update toggle availability button
+        const toggleBtn = document.getElementById("toggleAvailabilityBtn");
+        const toggleIcon = toggleBtn.querySelector(".availability-modal-icon");
+        const toggleText = toggleBtn.querySelector(".availability-modal-text");
+        
+        if (isUnavailable) {
+          toggleIcon.textContent = "check_circle";
+          toggleText.textContent = "Mark as Available";
+          toggleBtn.classList.add("make-available");
+          toggleBtn.classList.remove("make-unavailable");
+        } else {
+          toggleIcon.textContent = "do_not_disturb_on";
+          toggleText.textContent = "Mark as Unavailable";
+          toggleBtn.classList.add("make-unavailable");
+          toggleBtn.classList.remove("make-available");
+        }
         
         // Set up remove button with the item ID
         document.getElementById("removeItemBtn").setAttribute("data-id", itemId);
         
         // Show the modal
         modal.classList.add("show");
+      }
+      
+      // Function to get hex code for color names
+      function getColorHex(colorName) {
+        const colorMap = {
+          'black': '#000000',
+          'white': '#FFFFFF',
+          'navy': '#000080',
+          'blue': '#0000FF',
+          'red': '#FF0000',
+          'green': '#008000',
+          'purple': '#800080',
+          'pink': '#FFC0CB',
+          'yellow': '#FFFF00',
+          'orange': '#FFA500',
+          'brown': '#8B4513',
+          'gray': '#808080',
+          'beige': '#F5F5DC',
+          'turquoise': '#40E0D0',
+          'teal': '#008080'
+        };
+        
+        return colorMap[colorName.toLowerCase()] || '#888888';
       }
 
       // Close modal when clicking the close button
@@ -195,9 +538,28 @@
         }
       });
 
+      // Set up toggle availability button in modal
+      document.getElementById("toggleAvailabilityBtn").addEventListener("click", function() {
+        if (currentItemId) {
+          const itemElement = document.querySelector(`.wardrobe-item[data-id="${currentItemId}"]`);
+          if (itemElement) {
+            toggleItemAvailability(currentItemId, currentItemCategory, itemElement);
+            // Close the modal
+            document.getElementById("imageModal").classList.remove("show");
+          }
+        }
+      });
+
       // Set up remove button functionality
       document.getElementById("removeItemBtn").addEventListener("click", function() {
         const itemId = this.getAttribute("data-id");
+        if (itemId) {
+          removeItem(itemId);
+        }
+      });
+      
+      // Function to remove an item
+      function removeItem(itemId) {
         if (confirm("Are you sure you want to remove this item from your wardrobe? This will also remove any outfits that use this item.")) {
           // Send request to remove item
           fetch(`/remove_item/${itemId}`, {
@@ -227,6 +589,36 @@
             alert("Failed to remove item. Please try again.");
           });
         }
+      }
+      
+      // Filter accessories by subcategory
+      document.querySelectorAll('.accessories-filter .filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Remove active class from all buttons
+          document.querySelectorAll('.accessories-filter .filter-btn').forEach(b => {
+            b.classList.remove('active');
+          });
+          
+          // Add active class to this button
+          this.classList.add('active');
+          
+          // Get the filter value
+          const filter = this.getAttribute('data-filter');
+          
+          // Filter the accessories
+          document.querySelectorAll('.accessory-item').forEach(item => {
+            if (filter === 'all') {
+              item.style.display = 'flex';
+            } else {
+              const subcategory = item.getAttribute('data-subcategory');
+              if (subcategory === filter) {
+                item.style.display = 'flex';
+              } else {
+                item.style.display = 'none';
+              }
+            }
+          });
+        });
       });
       
       // Set up clear wardrobe button functionality
@@ -259,6 +651,41 @@
             alert("Failed to clear wardrobe. Please try again.");
           });
         }
+      });
+      
+      // Initialize accessories section visibility and listen for unavailable filter changes
+      document.addEventListener('DOMContentLoaded', function() {
+        // Check if we have any accessories
+        const accessories = document.querySelectorAll('#accessories .accessory-item');
+        
+        // If we don't have any accessories, hide the filter buttons
+        if (accessories.length === 0) {
+          const filterButtons = document.querySelector('.accessories-filter');
+          if (filterButtons) {
+            filterButtons.style.display = 'none';
+          }
+        }
+        
+        // Add handler for showing/hiding unavailable items
+        const showUnavailableCheckbox = document.getElementById('showUnavailable');
+        showUnavailableCheckbox.addEventListener('change', function() {
+          const showUnavailable = this.checked;
+          document.querySelectorAll('.wardrobe-item.unavailable').forEach(item => {
+            if (showUnavailable) {
+              item.style.display = 'flex';
+            } else {
+              item.style.display = 'none';
+            }
+          });
+        });
+        
+        // Enable right-click context menu for wardrobe items
+        document.addEventListener('contextmenu', function(event) {
+          const wardrobeItem = event.target.closest('.wardrobe-item');
+          if (wardrobeItem) {
+            showContextMenu(event, wardrobeItem);
+          }
+        });
       });
     </script>
   </body>

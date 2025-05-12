@@ -128,7 +128,7 @@ section .content h1 {
     color: #666666;
     text-align: center;
     font-size: 1.1em;
-    margin-bottom: 10px;
+    margin-bottom: -20px;
 }
 
 .wardrobe-container {
@@ -257,8 +257,10 @@ section .content h1 {
 .wardrobe-actions {
     width: 100%;
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: -50px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .clear-wardrobe-btn {
@@ -299,9 +301,10 @@ section .content h1 {
     background-color: white;
     padding: 20px;
     border-radius: 12px;
-    max-width: 80%;
-    max-height: 80%;
-    overflow: hidden;
+    width: 700px;
+    max-width: 900%;  /* Increased from 80% */
+    max-height: 90%;  /* Increased from 80% */
+    overflow: hidden;  /* Changed back to hidden */
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
     animation: modalIn 0.3s ease;
     display: flex;
@@ -346,14 +349,107 @@ section .content h1 {
 }
 
 .item-details {
-    margin: 15px 0;
+    margin: 15px 0 -15px 0;
     color: #333;
     text-align: center;
+    width: 100%;
 }
 
 .item-details h3 {
     color: #1a1158;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+/* Updated: Changed from column to row layout for details */
+.detail-section-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.detail-section {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
     margin-bottom: 10px;
+}
+
+.detail-section strong {
+    color: #1a1158;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.no-data {
+    color: #999;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+/* Category badge styling */
+.category-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background-color: #1a1158;
+    color: #f7d6a6;
+    font-size: 0.9em;
+    font-weight: 500;
+    margin: 0 auto;  /* Center the badge */
+}
+
+/* Color chips styling */
+.color-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 5px;
+    justify-content: center;  /* Center the chips */
+}
+
+.color-chip {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.9em;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* For white chips, use dark text and border */
+.color-chip[style*="FFFFFF"] {
+    color: #333;
+    text-shadow: none;
+    border: 1px solid #ddd;
+}
+
+/* Occasion tags styling */
+.occasion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 5px;
+    justify-content: center;  /* Center the tags */
+}
+
+.occasion-tag {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background-color: #f0f0f8;
+    color: #1a1158;
+    border: 1px solid #d0d0e8;
+    font-size: 0.9em;
+    font-weight: 500;
 }
 
 .modal-actions {
@@ -403,6 +499,240 @@ footer {
     font-style: italic;
 }
 
+/* Accessories section styling */
+.accessories-section {
+    margin-top: 20px;
+}
+
+.accessories-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.filter-btn {
+    padding: 6px 12px;
+    background-color: #f0f0f8;
+    border: 1px solid #d0d0e8;
+    border-radius: 20px;
+    color: #1a1158;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background-color: #e0e0f0;
+}
+
+.filter-btn.active {
+    background-color: #1a1158;
+    color: #f7d6a6;
+    border-color: #1a1158;
+}
+
+.accessory-item {
+    position: relative;
+}
+
+.accessory-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #1a1158;
+    color: #f7d6a6;
+    font-size: 0.7em;
+    padding: 3px 8px;
+    border-radius: 10px;
+    z-index: 5;
+    text-transform: capitalize;
+}
+
+/* Add color-coding for different accessory subcategories */
+.accessory-item[data-subcategory="jewelry"] .accessory-badge {
+    background-color: #9c27b0; /* Purple for jewelry */
+}
+
+.accessory-item[data-subcategory="winter"] .accessory-badge {
+    background-color: #2196f3; /* Blue for winter accessories */
+}
+
+.accessory-item[data-subcategory="bags"] .accessory-badge {
+    background-color: #ff9800; /* Orange for bags */
+}
+
+.accessory-item[data-subcategory="headwear"] .accessory-badge {
+    background-color: #4caf50; /* Green for headwear */
+}
+
+.accessory-item[data-subcategory="other"] .accessory-badge {
+    background-color: #607d8b; /* Blue-grey for other accessories */
+}
+
+/* Empty state for the accessories section */
+#accessories:empty::after {
+    content: "No accessories yet";
+    display: block;
+    width: 100%;
+    padding: 30px;
+    text-align: center;
+    background-color: #f8f8ff;
+    border-radius: 12px;
+    border: 1px dashed #d0d0e8;
+    color: #8c84c6;
+    font-style: italic;
+}
+
+/* Unavailable/Dirty item styling */
+.unavailable-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.unavailable-badge .material-symbols-outlined {
+    font-size: 18px;
+    color: #f44336; /* Red */
+}
+
+/* Apply a subtle grayscale filter to unavailable items */
+.wardrobe-item.unavailable img {
+    filter: grayscale(50%);
+    opacity: 0.7;
+}
+
+/* Status badge in the modal */
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 500;
+    min-width: 120px;
+}
+
+.available-status {
+    background-color: #e8f5e9; /* Light green */
+    color: #2e7d32; /* Dark green */
+    border: 1px solid #a5d6a7; /* Medium green */
+}
+
+.unavailable-status {
+    background-color: #ffebee; /* Light red */
+    color: #c62828; /* Dark red */
+    border: 1px solid #ef9a9a; /* Medium red */
+}
+
+/* Context menu for right-click actions */
+.context-menu {
+    position: absolute;
+    width: 200px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: none;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease;
+}
+
+.context-menu.visible {
+    display: block;
+}
+
+.context-menu-option {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.context-menu-option:hover {
+    background-color: #f5f5f5;
+}
+
+.context-menu-option .material-symbols-outlined {
+    font-size: 18px;
+    color: #1a1158;
+}
+
+.context-menu-option.remove-item .material-symbols-outlined {
+    color: #f44336; /* Red for delete */
+}
+
+/* Make context menu option text unselectable */
+.context-menu-option span {
+    user-select: none;
+}
+
+/* Keyframes for context menu fade in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Toggle availability button styling */
+.toggle-btn {
+    background-color: #1a1158; /* Default navy blue */
+    color: white;
+    margin-right: 10px;
+}
+
+.toggle-btn.make-available {
+    background-color: #4caf50; /* Green for "Mark as Available" */
+}
+
+.toggle-btn.make-unavailable {
+    background-color: #ff9800; /* Changed to orange for "Mark as Unavailable" */
+}
+
+/* Filter options for showing/hiding unavailable items */
+.filter-options {
+    display: flex;
+    align-items: center;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9em;
+    color: #1a1158;
+    cursor: pointer;
+    user-select: none;
+    background-color: #f0f0f8;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid #d0d0e8;
+    margin-right: 15px;
+}
+
+.filter-label:hover {
+    background-color: #e0e0f0;
+}
+
+.filter-label input[type="checkbox"] {
+    margin: 0;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     section.wardrobe-content {
@@ -433,11 +763,49 @@ footer {
     
     .wardrobe-actions {
         justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .filter-options {
+        margin-bottom: 10px;
     }
     
     .clear-wardrobe-btn {
         width: 100%;
         max-width: 250px;
+    }
+    
+    /* Responsive adjustments for the filter buttons */
+    .accessories-filter {
+        justify-content: center;
+    }
+    
+    .filter-btn {
+        font-size: 0.8em;
+        padding: 5px 10px;
+    }
+    
+    /* Keep row layout on mobile for details - CHANGED HERE */
+    .detail-section-row {
+        flex-direction: row;
+        gap: 8px; /* Reduce gap on smaller screens */
+    }
+    
+    .detail-section {
+        margin-bottom: 5px;
+        font-size: 0.9em; /* Slightly smaller font size on mobile */
+    }
+    
+    .status-badge {
+        min-width: auto;
+    }
+    
+    /* Keep row layout for modal actions - CHANGED HERE */
+    .modal-actions {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
     }
 }
 
@@ -459,8 +827,28 @@ footer {
         height: 180px;
     }
     
+    /* Keep modal actions in row layout - CHANGED HERE */
     .modal-actions {
-        flex-direction: column;
+        flex-direction: row;
         width: 100%;
+        gap: 10px; /* Reduced gap for smaller screens */
+    }
+    
+    /* Make buttons smaller on very small screens - ADDED */
+    .modal-actions .btn {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    
+    /* Responsive adjustments for accessory filters */
+    .accessories-filter {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        justify-content: flex-start;
+    }
+    
+    .filter-btn {
+        flex: 0 0 auto;
     }
 }

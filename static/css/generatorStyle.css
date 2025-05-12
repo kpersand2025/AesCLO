@@ -326,11 +326,11 @@ section .content h1 {
 .outfit-item {
     position: relative;
     width: 100%;
-    max-width: 300px;
+    max-width: 350px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: -25px;
+    margin-bottom: -15px;
 }
 
 .item-label {
@@ -354,7 +354,7 @@ section .content h1 {
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     border: 2px solid #f0f0f0;
     background-color: white;
-    object-fit: cover;
+    object-fit: contain;
     cursor: pointer; /* Add pointer cursor to indicate clickability */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transition for hover effect */
 }
@@ -774,88 +774,7 @@ footer {
   padding: 6px 12px;
 }
 
-/* Weather-based outfit styles */
-.weather-options {
-    margin-top: 10px;
-  }
-  
-  .weather-data-container {
-    margin-top: 20px;
-    background-color: rgba(255, 255, 255, 0.7);
-    border-radius: 10px;
-    padding: 15px;
-    border: 1px solid #d0d0e8;
-  }
-  
-  .weather-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    padding: 20px;
-    color: #1a1158;
-  }
-  
-  .weather-info {
-    padding: 10px;
-  }
-  
-  .weather-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  .weather-header .material-symbols-outlined {
-    font-size: 48px;
-    color: #1a1158;
-  }
-  
-  .weather-details {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .location {
-    font-weight: 600;
-    font-size: 1.2em;
-    color: #1a1158;
-  }
-  
-  .temperature {
-    font-size: 1.5em;
-    font-weight: 700;
-    color: #333;
-  }
-  
-  .conditions {
-    font-size: 1em;
-    color: #666;
-  }
-  
-  .weather-error {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    padding: 20px;
-    color: #d32f2f;
-    text-align: center;
-  }
-  
-  .weather-error .material-symbols-outlined {
-    font-size: 32px;
-  }
-  
-  .coordination-badge.weather-badge {
-    background: linear-gradient(135deg, #1a1158, #4a64b5);
-    color: white;
-    padding: 6px 12px;
-  }
-
-/* Weather-based mode styling */
+/* Weather options styling */
 .weather-options {
     margin-top: 10px;
   }
@@ -868,24 +787,55 @@ footer {
     border: 1px solid #d0d0e8;
   }
   
-  .weather-location-input {
+  /* Weather tabs styling */
+  .weather-selection-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #d0d0e8;
+    padding-bottom: 10px;
+  }
+  
+  .weather-tab {
+    padding: 8px 15px;
+    background-color: #f0f0f8;
+    border: 1px solid #d0d0e8;
+    border-radius: 6px;
+    color: #1a1158;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+    font-weight: 500;
+  }
+  
+  .weather-tab:hover {
+    background-color: #e8e8f0;
+  }
+  
+  .weather-tab.active {
+    background-color: #1a1158;
+    color: #f7d6a6;
+    border-color: #1a1158;
+  }
+  
+  /* Location input styling */
+  .location-input {
     margin-bottom: 15px;
   }
   
-  .weather-location-input label {
+  .location-input label {
     display: block;
-    font-weight: 600;
+    margin-bottom: 5px;
     color: #1a1158;
-    margin-bottom: 8px;
-    font-size: 0.95em;
+    font-weight: 500;
   }
   
-  .input-with-button {
+  .location-search {
     display: flex;
     gap: 10px;
   }
   
-  .input-with-button input {
+  #locationInput {
     flex: 1;
     padding: 10px;
     border: 1px solid #d0d0e8;
@@ -893,34 +843,30 @@ footer {
     font-size: 0.9em;
   }
   
-  .get-weather-btn {
-    padding: 10px;
-    min-width: auto;
+  .small-btn {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    white-space: nowrap;
   }
   
-  .weather-display {
-    margin-top: 15px;
-    background-color: #f8f8ff;
-    border-radius: 10px;
-    padding: 15px;
-    border: 1px solid #d0d0e8;
-  }
-  
+  /* Weather info display */
   .weather-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    background-color: #f0f0f8;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
   }
   
-  .weather-icon {
-    font-size: 48px;
-    color: #1a1158;
-  }
-  
-  .weather-details {
+  .weather-data {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
+  }
+  
+  .weather-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   
   .weather-location {
@@ -929,58 +875,204 @@ footer {
     font-size: 1.1em;
   }
   
-  .weather-temperature {
-    font-size: 1.4em;
+  .weather-header .material-symbols-outlined {
+    font-size: 30px;
+    color: #1a1158;
+  }
+  
+  .weather-details {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .weather-temp {
+    font-size: 2em;
     font-weight: 700;
     color: #1a1158;
   }
   
-  .weather-description {
-    color: #666;
-    font-size: 0.9em;
-  }
-  
-  .coordination-badge.weather-badge {
-    background: linear-gradient(135deg, #1a1158, #4a71c4);
-  }
-  
-  /* Weather-specific styling for the outfit display */
-  .weather-outfit-info {
-    background-color: #f0f8ff;
-    border-radius: 8px;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 0.9em;
+  .weather-condition {
+    font-size: 1.1em;
     color: #1a1158;
-    text-align: center;
+    text-transform: capitalize;
   }
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .occasion-btn {
+  
+  /* Manual weather selection */
+  .manual-weather-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .manual-weather-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .manual-weather-row label {
+    font-weight: 500;
+    color: #1a1158;
+  }
+  
+  .weather-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .weather-condition-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100px;
-    height: 70px;
+    height: 80px;
+    background-color: #f8f8ff;
+    border: 1px solid #d0d0e8;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    gap: 8px;
+    color: #1a1158;
+  }
+  
+  .weather-condition-btn:hover {
+    background-color: #f0f0f8;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .weather-condition-btn.active {
+    background-color: #1a1158;
+    color: #f7d6a6;
+    border-color: #1a1158;
+  }
+  
+  .weather-condition-btn .material-symbols-outlined {
+    font-size: 24px;
+  }
+  
+  .temperature-input {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  #temperatureInput {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d0d0e8;
+    border-radius: 6px;
+    font-size: 1em;
+  }
+  
+  .temperature-unit {
+    margin-left: 10px;
+    font-weight: 500;
+    color: #1a1158;
+  }
+  
+  /* Weather selection info */
+  .weather-selection-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f8ff;
+    border-radius: 8px;
+    color: #1a1158;
     font-size: 0.9em;
   }
   
-  .occasion-btn .material-symbols-outlined {
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .occasion-buttons {
-    justify-content: space-between;
+  #selectedWeatherDisplay {
+    font-weight: 600;
   }
   
-  .occasion-btn {
-    width: 48%;
-    height: 60px;
-    font-size: 0.8em;
+  /* Weather badge styling */
+  .coordination-badge.weather-badge {
+    background: linear-gradient(135deg, #1a1158, #4682b4);
+    padding: 6px 12px;
+  }
+  
+  /* Animation for the spinning icon */
+  .spinning {
+    animation: spin 1.5s linear infinite;
+  }
+
+/* Item image container for positioning the unavailable badge */
+.item-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Badge for unavailable/dirty items in outfits */
+.unavailable-outfit-badge {
+  position: absolute;
+  top: 10px;
+  left: 5px;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.unavailable-outfit-badge .material-symbols-outlined {
+  font-size: 16px;
+  color: #f44336; /* Red */
+}
+
+/* Add tooltip style for hover explanation */
+.tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  position: absolute;
+  left: 0;
+  top: -30px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Update the responsive styles for the tooltip */
+@media (max-width: 600px) {
+  .tooltip .tooltip-text {
+    font-size: 10px;
+    padding: 3px 8px;
+    top: -25px;
   }
 }
 
-/* Responsive design */
+/* Make the outfit item adapt to the container with badge */
+.outfit-item img {
+  position: relative;
+  z-index: 5;
+}
+
+/* Responsive design for outfit generator page */
 @media (max-width: 768px) {
     section.generator-content {
         padding: 30px 20px;
@@ -1012,6 +1104,39 @@ footer {
     .modal-content {
         max-width: 90%;
     }
+    
+    .weather-condition-btn {
+      width: 80px;
+      height: 70px;
+      font-size: 0.9em;
+    }
+    
+    .weather-condition-btn .material-symbols-outlined {
+      font-size: 20px;
+    }
+    
+    .location-search {
+      flex-direction: column;
+    }
+    
+    .small-btn {
+      width: 100%;
+    }
+    
+    .weather-tab {
+      font-size: 0.8em;
+      padding: 6px 10px;
+    }
+    
+    .occasion-btn {
+      width: 100px;
+      height: 70px;
+      font-size: 0.9em;
+    }
+    
+    .occasion-btn .material-symbols-outlined {
+      font-size: 20px;
+    }
 }
 
 @media (max-width: 600px) {
@@ -1029,5 +1154,39 @@ footer {
     
     .outfit-item {
         max-width: 250px;
+    }
+    
+    .weather-buttons {
+      justify-content: space-between;
+    }
+    
+    .weather-condition-btn {
+      width: 48%;
+      height: 70px;
+    }
+    
+    .occasion-buttons {
+      justify-content: space-between;
+    }
+    
+    .occasion-btn {
+      width: 48%;
+      height: 60px;
+      font-size: 0.8em;
+    }
+    
+    .unavailable-outfit-badge {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .unavailable-outfit-badge .material-symbols-outlined {
+      font-size: 14px;
+    }
+    
+    [title]:hover::after {
+      font-size: 10px;
+      padding: 3px 8px;
+      top: -25px;
     }
 }
