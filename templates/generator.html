@@ -325,12 +325,11 @@
                 'beige': '#F5F5DC',
                 'turquoise': '#40E0D0',
                 'teal': '#008080'
-                // Add any other colors your system might detect
               };
               
               // Add color chips for each color in the user's wardrobe
               result.colors.forEach(color => {
-                const backgroundColor = colorMap[color] || '#888888'; // Fallback color
+                const backgroundColor = colorMap[color] || '#888888'; 
                 const borderStyle = (color === 'white') ? 'border: 1px solid #ddd;' : '';
                 
                 const colorChip = document.createElement('div');
@@ -489,8 +488,7 @@
         // Randomly select a top
         const top = wardrobe.tops[Math.floor(Math.random() * wardrobe.tops.length)];
         
-        // Instead of trying to use random selection for complete top outfits,
-        // we'll make an API call to get proper outfit data
+        // Make an API call to get proper outfit data
         try {
           // Show loading state
           outfitDisplay.innerHTML = `
@@ -546,7 +544,7 @@
           const shoe = wardrobe.shoes[Math.floor(Math.random() * wardrobe.shoes.length)];
           let bottom = null;
           
-          // For the fallback, assume it's not a complete top since we can't tell
+          // For the fallback, assume it's not a complete top
           if (wardrobe.bottoms.length > 0) {
             bottom = wardrobe.bottoms[Math.floor(Math.random() * wardrobe.bottoms.length)];
           }
@@ -949,7 +947,7 @@
           updateManualWeatherSelection();
         });
         
-        // Update manual weather selection
+        // Manual weather selection
         function updateManualWeatherSelection() {
           const selectedConditionBtn = document.querySelector('.weather-condition-btn.active');
           const temperatureInput = document.getElementById('temperatureInput');
@@ -958,7 +956,7 @@
             const condition = selectedConditionBtn.getAttribute('data-condition');
             const temperature = parseInt(temperatureInput.value);
             
-            // Update the selected weather display
+            // Selected weather display
             document.getElementById('selectedWeatherDisplay').textContent = 
               `Selected: ${temperature}°F, ${condition.charAt(0).toUpperCase() + condition.slice(1)}`;
             document.getElementById('clearWeatherSelection').style.display = 'inline-flex';
