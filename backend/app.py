@@ -5,9 +5,11 @@ from flask_cors import CORS
 import uuid
 import os
 import random
+import base64  # Added import for base64 decoding
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from google.cloud import vision, storage
+from google.cloud import vision
+from google.cloud import storage
 from google.oauth2 import service_account
 import io
 import certifi
@@ -80,7 +82,16 @@ try:
             vision_client = vision.ImageAnnotatorClient(credentials=credentials)
             storage_client = storage.Client(credentials=credentials)
         else:
-            print("WARNING: No Google credentials found. Vision API and Cloud Storage will not work.")
+            # Option 3: Check for base64 encoded JSON content
+            google_creds_b64 = os.environ.get("GOOGLE_CREDENTIALS_B64")
+            if google_creds_b64:
+                credentials_json = base64.b64decode(google_creds_b64).decode('utf-8')
+                credentials_info = json.loads(credentials_json)
+                credentials = service_account.Credentials.from_service_account_info(credentials_info)
+                vision_client = vision.ImageAnnotatorClient(credentials=credentials)
+                storage_client = storage.Client(credentials=credentials)
+            else:
+                print("WARNING: No Google credentials found. Vision API and Cloud Storage will not work.")
 except Exception as e:
     print(f"Error setting up Google Cloud clients: {e}")
 
