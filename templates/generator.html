@@ -472,90 +472,65 @@
 
       // Random outfit generation
       async function generateRandomOutfit() {
-        const wardrobe = await fetchWardrobe();
         const outfitDisplay = document.getElementById("outfitDisplay");
-
-        if (wardrobe.tops.length < 1 || wardrobe.shoes.length < 1) {
-          outfitDisplay.innerHTML = `
-            <div class="alert alert-warning">
-              <span class="material-symbols-outlined">warning</span>
-              <span>You need at least one top and one pair of shoes in your wardrobe to generate an outfit.</span>
-            </div>
-          `;
-          return;
-        }
-
-        // Randomly select a top
-        const top = wardrobe.tops[Math.floor(Math.random() * wardrobe.tops.length)];
         
-        // Make an API call to get proper outfit data
         try {
           // Show loading state
           outfitDisplay.innerHTML = `
             <div class="loading-spinner">
               <span class="material-symbols-outlined spinning">refresh</span>
-              <p>Generating random outfit...</p>
+              <p>Generating truly random outfit...</p>
             </div>
           `;
           
-          // Use the color-coordinated endpoint with random color option
-          const response = await fetch('/generate_color_outfit', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              random_color: true
-            })
-          });
+          // Fetch the user's entire wardrobe
+          const response = await fetch('/get_wardrobe');
+          const wardrobe = await response.json();
           
-          const result = await response.json();
-          
-          if (result.success) {
-            // Store current outfit
-            currentOutfit.top = result.top;
-            currentOutfit.bottom = result.bottom;
-            currentOutfit.shoe = result.shoes;
-            
-            // Display the outfit - the API will handle complete tops correctly
-            displayOutfit(result.top, result.bottom, result.shoes, "random");
-          } else {
-            // Fall back to simple random selection if API call fails
-            const shoe = wardrobe.shoes[Math.floor(Math.random() * wardrobe.shoes.length)];
-            let bottom = null;
-            
-            // For the fallback, assume it's not a complete top since we can't tell
-            if (wardrobe.bottoms.length > 0) {
-              bottom = wardrobe.bottoms[Math.floor(Math.random() * wardrobe.bottoms.length)];
-            }
-            
-            // Store current outfit
-            currentOutfit.top = top;
-            currentOutfit.bottom = bottom;
-            currentOutfit.shoe = shoe;
-            
-            // Display the outfit
-            displayOutfit(top, bottom, shoe, "random");
+          // Check if we have enough items
+          if (wardrobe.tops.length < 1 || wardrobe.shoes.length < 1) {
+            outfitDisplay.innerHTML = `
+              <div class="alert alert-warning">
+                <span class="material-symbols-outlined">warning</span>
+                <span>You need at least one top and one pair of shoes in your wardrobe to generate an outfit.</span>
+              </div>
+            `;
+            return;
           }
-        } catch (error) {
-          console.error("Error generating random outfit:", error);
           
-          // Fall back to simple random selection if the API call fails
-          const shoe = wardrobe.shoes[Math.floor(Math.random() * wardrobe.shoes.length)];
-          let bottom = null;
+          // Truly random selection without any coordination algorithm
+          // Randomly select a top
+          const randomTop = wardrobe.tops[Math.floor(Math.random() * wardrobe.tops.length)];
           
-          // For the fallback, assume it's not a complete top
-          if (wardrobe.bottoms.length > 0) {
-            bottom = wardrobe.bottoms[Math.floor(Math.random() * wardrobe.bottoms.length)];
+          // Check if this is a complete top (dress/jumpsuit) based on subcategory
+          const isCompleteTop = randomTop.subcategory === "complete";
+          
+          // Randomly select a bottom (if needed)
+          let randomBottom = null;
+          if (!isCompleteTop && wardrobe.bottoms.length > 0) {
+            randomBottom = wardrobe.bottoms[Math.floor(Math.random() * wardrobe.bottoms.length)];
           }
+          
+          // Randomly select shoes
+          const randomShoes = wardrobe.shoes[Math.floor(Math.random() * wardrobe.shoes.length)];
           
           // Store current outfit
-          currentOutfit.top = top;
-          currentOutfit.bottom = bottom;
-          currentOutfit.shoe = shoe;
+          currentOutfit.top = randomTop;
+          currentOutfit.bottom = randomBottom;
+          currentOutfit.shoe = randomShoes;
           
-          // Display the outfit
-          displayOutfit(top, bottom, shoe, "random");
+          // Display the outfit with "truly random" label
+          displayOutfit(randomTop, randomBottom, randomShoes, "truly-random", 
+            `<span class="material-symbols-outlined">casino</span> Truly Random Selection`);
+          
+        } catch (error) {
+          console.error("Error generating random outfit:", error);
+          outfitDisplay.innerHTML = `
+            <div class="alert alert-warning">
+              <span class="material-symbols-outlined">error</span>
+              <span>Failed to generate random outfit. Please try again.</span>
+            </div>
+          `;
         }
       }
 
