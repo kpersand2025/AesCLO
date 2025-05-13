@@ -64,6 +64,7 @@ def get_color_name(rgb):
     Function to map RGB values to common color names that better match human perception.
     Takes an RGB tuple and returns a color name string.
     Improved to better distinguish between red and pink based on human perception.
+    Also fixes brown/beige categorization issues.
     """
     r, g, b = rgb
     
@@ -118,8 +119,47 @@ def get_color_name(rgb):
     if 30 <= b <= 120 and r < 70 and g < 80 and b > max(r, g) * 1.25:
         return "navy"
     
+    # IMPROVED BROWN/BEIGE DETECTION - Place this before red detection
+    # Brown has red dominant but also significant green, with lower blue
+    if r > g > b:  # Red > Green > Blue is the signature of browns
+        # Strong browns
+        if r > 120 and 60 <= g <= 160 and 10 <= b <= 120 and g > b * 1.2:
+            # Classic browns
+            if r > g * 1.1 and g > b * 1.3:
+                return "brown"
+        
+        # Light browns / tans / beiges
+        if 160 <= r <= 230 and 140 <= g <= 200 and 100 <= b <= 170:
+            # If r, g, b are relatively close together but still following r > g > b
+            if r/b < 1.9 and r/g < 1.3 and g/b < 1.6:
+                return "beige"
+    
+    # More brown detection - colors like RGB(190,164,133) should be beige
+    if 160 <= r <= 230 and 140 <= g <= 200 and 100 <= b <= 170 and r > g > b:
+        brown_proportion_check = (r - b) / r  # How much "brown-ness" is in the color
+        if 0.15 <= brown_proportion_check <= 0.45:  # Not too stark, not too subtle
+            return "beige"
+    
+    # More beige/tan detection
+    if 180 <= r <= 240 and 160 <= g <= 220 and 120 <= b <= 190 and r > g > b:
+        # For lighter beiges with less difference between channels
+        if r/b < 1.75 and r/g < 1.3:
+            return "beige"
+    
     # Base case: When red is dominant (red > green and red > blue)
     if r > g and r > b:
+        # First check if this matches brown criteria - brown takes precedence over red in ambiguous cases
+        if g > b * 1.3 and r/g < 1.5:
+            # Brown colors with more pronounced red tint
+            if 100 <= r <= 200 and 60 <= g <= 150 and 10 <= b <= 100:
+                return "brown"
+        
+        # More brown detection - focused on medium browns
+        if 100 <= r <= 180 and 60 <= g <= 140 and 0 <= b <= 100:
+            # If there's enough green presence compared to red
+            if g/r > 0.5 and (r-g) < 70:
+                return "brown"
+        
         # Deep/pure reds: Very dominant red with low green and blue
         if r > 160 and g < 90 and b < 90:
             return "red"  
@@ -132,7 +172,7 @@ def get_color_name(rgb):
         if r > 100 and r < 180 and g < 80 and b < 80 and r > (g + b) * 0.7:
             return "red"  
             
-        # Clwar pink cases
+        # Clear pink cases
         if r > 200 and g > 150 and b > 150:
             return "pink"  
             
@@ -144,7 +184,7 @@ def get_color_name(rgb):
         if r > 180 and 100 <= g <= 150 and 100 <= b <= 170 and b > g * 0.8:
             return "pink" 
             
-        # Subtle pinks\
+        # Subtle pinks
         if r > 180 and g > 120 and b > 120 and b > g * 0.8:
             return "pink" 
         
@@ -172,6 +212,11 @@ def get_color_name(rgb):
                 return "pink" 
             else:
                 return "red"  
+        
+        # Additional detection for browns that might be misclassified as red
+        if 120 <= r <= 180 and 80 <= g <= 140 and 40 <= b <= 100:
+            if g > b * 1.5 and r/g < 1.8:
+                return "brown"
                 
         # Remaining red-dominant colors
         if g < 100 and b < 100:
@@ -200,7 +245,7 @@ def get_color_name(rgb):
         elif abs(r - b) < 30:
             return "purple"
     
-    # Define thresholds for color categories
+    # Define thresholds for color categorization
     high_threshold = 0.4
     mid_threshold = 0.3
     low_threshold = 0.2
@@ -255,7 +300,7 @@ def get_color_name(rgb):
             red_dominance = r / max(g, b) if max(g, b) > 0 else 2
             return "red" if red_dominance > 1.8 else "brown"
     
-    # Brown hues
+    # Brown hues with improved detection
     if r_ratio > mid_threshold and g_ratio > low_threshold and g_ratio < high_threshold and b_ratio < mid_threshold:
         if r > 180 and g > 140 and b < 100:
             # Modified to categorize more orange-browns as brown
@@ -265,7 +310,10 @@ def get_color_name(rgb):
         elif r > 120 and g > 60 and b < 80:  
             return "brown"
         elif r > 180 and g > 160 and b > 100:
-            return "beige" if g > 170 and b > 140 and r-b < 60 else "brown"
+            # Improved beige detection with broader parameters
+            if g > 170 and b > 140 and r-b < 80:
+                return "beige"
+            return "brown"
         # Additional check for brown
         if r > g > b and r > 100 and g > 40 and b < 80:
             return "brown"
@@ -277,10 +325,10 @@ def get_color_name(rgb):
             return "yellow"
         elif r > 190 and g > 170 and b > 130:
             # Modified beige check to not catch light pink colors
-            if r > g > b and r-b < 60:
+            if r > g > b and r-b < 80:
                 return "beige"
             # If red is significantly higher than blue, it's more pink
-            elif r - b > 60:
+            elif r - b > 80:
                 return "pink"
             else:
                 return "beige"
@@ -323,17 +371,22 @@ def get_color_name(rgb):
         if b < 120 and max(r, g) < 100 and b > max(r, g) * 1.1:
             return "navy"
     
-    # Modified Beige/Tan hues - more specific to avoid catching light pinks
-    if r > 180 and g > 150 and b > 120 and r > g > b:
-        # Pink-peach colors will have a significant difference between red and blue
-        if r - b > 50:
-            return "pink" 
-        return "beige"  
+    # IMPROVED Beige/Tan hues detection - capturing a broader range
+    # Specifically for RGB values like (190,164,133)
+    if 180 <= r <= 210 and 140 <= g <= 185 and 110 <= b <= 150 and r > g > b:
+        return "beige"
+    
+    # More general beige detection
+    if 180 <= r <= 235 and 160 <= g <= 215 and 130 <= b <= 180 and r > g > b:
+        return "beige"
     
     # Handle other edge cases
     if r > 190 and g > 170 and b > 140:
+        # Improved check for beige vs pink
+        if r > g > b and r-b < 80:
+            return "beige"
         # Check for pink-ish colors
-        if r - b > 50:
+        if r - b > 80:
             return "pink"
         return "beige"
     
