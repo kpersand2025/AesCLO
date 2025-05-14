@@ -92,6 +92,8 @@
             })
             .catch((error) => {
               console.error("Error:", error);
+              errorMessage.textContent = "Failed to connect to the server. Please try again later.";
+              errorMessage.style.display = "block";
             });
         });
     </script>
