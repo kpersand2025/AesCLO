@@ -100,8 +100,8 @@
             password: password,
           };
 
-          // Send a POST request to the Flask backend
-          fetch("http://127.0.0.1:5000/register", {
+          // Use a relative URL instead of hardcoded localhost URL
+          fetch("/register", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -116,11 +116,19 @@
                     ? "green"
                     : "red";
                 message.textContent = data.message;
+                
+                // If account was created successfully, redirect to login page after 2 seconds
+                if (data.message === "Account created successfully!") {
+                  setTimeout(function() {
+                    window.location.href = "{{ url_for('login_page') }}";
+                  }, 2000);
+                }
               }
             })
             .catch((error) => {
               message.style.color = "red";
               message.textContent = "An error occurred: " + error.message;
+              console.error("Registration error:", error);
             });
         });
 
