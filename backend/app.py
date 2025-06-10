@@ -18,6 +18,7 @@ import os
 from dotenv import load_dotenv
 from flask import send_file
 import tempfile
+import shutil
 
 # Load environment variables from .env file
 if os.path.exists('.env'):
@@ -824,12 +825,12 @@ def upload_image():
         weather_conditions = []
         temperature_range = []
 
-    # Move file to static/uploads/
+    # Move file to static/uploads/ using shutil to avoid cross-device error
     try:
         upload_folder = os.path.join(app.static_folder, 'uploads')
         os.makedirs(upload_folder, exist_ok=True)
         final_path = os.path.join(upload_folder, unique_filename)
-        os.rename(temp_filepath, final_path)
+        shutil.move(temp_filepath, final_path)  # ✅ safer than os.rename across file systems
 
         # Create image URL served from static
         image_url = url_for('static', filename=f'uploads/{unique_filename}')
