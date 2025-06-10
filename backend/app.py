@@ -60,6 +60,10 @@ outfits_collection = mongo.db.outfits
 # Define allowed file extensions
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
+# Local Image Storage Setup
+UPLOAD_FOLDER = os.path.join(app.static_folder, 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 # Google Cloud setup
 # Set up clients for Vision API and Cloud Storage
 vision_client = None
@@ -760,18 +764,17 @@ def upload_image():
     if not allowed_file(file.filename):
         return render_template("upload.html", error_message="Invalid file type. Only .png, .jpg, .jpeg, .webp are allowed.")
 
-    # Retrieve the user
     user = users_collection.find_one({"username": session["user"]})
     if not user:
         return render_template("upload.html", error_message="User not found")
 
-    # Save file to a temporary location for processing
+    # Generate unique filename
     filename = secure_filename(file.filename)
     unique_filename = f"{uuid.uuid4()}_{filename}"
     temp_filepath = os.path.join('/tmp', unique_filename)
     file.save(temp_filepath)
 
-    # Use Gemini to predict the clothing category and subcategory
+    # Predict clothing category and subcategory
     from utils.gemini_utils import categorize_clothing_item
     predicted_category, predicted_subcategory = categorize_clothing_item(temp_filepath)
 
@@ -780,17 +783,14 @@ def upload_image():
             os.remove(temp_filepath)
         except Exception as e:
             print(f"Error removing temporary file: {e}")
-
-        return render_template("upload.html", 
-                               error_message="This image doesn't appear to be a clothing item. Please upload a clearer or different image.")
+        return render_template("upload.html", error_message="This image doesn't appear to be a clothing item. Please upload a clearer or different image.")
 
     # Extract dominant colors
     try:
         colors = extract_colors(temp_filepath, vision_client)
-        
         from utils.vision_utils import get_top_colors
         top_colors = get_top_colors(colors, max_colors=3, single_color_threshold=0.6)
-        
+
         dominant_colors = []
         for color in top_colors:
             rgb = color['rgb']
@@ -801,11 +801,10 @@ def upload_image():
                 'score': color['score'],
                 'pixel_fraction': color['pixel_fraction']
             })
-            
     except Exception as e:
         print(f"Error extracting colors: {e}")
         dominant_colors = []
-        
+
     # Analyze clothing occasion
     try:
         occasions = analyze_clothing_occasion(temp_filepath)
@@ -814,7 +813,7 @@ def upload_image():
         print(f"Error analyzing clothing occasion: {e}")
         occasions = []
 
-    # Analyze for weather suitability
+    # Analyze weather suitability
     try:
         weather_suitability = analyze_clothing_weather_suitability(temp_filepath)
         weather_conditions = weather_suitability.get("weather_conditions", [])
@@ -825,24 +824,20 @@ def upload_image():
         weather_conditions = []
         temperature_range = []
 
-    # Upload to Google Cloud Storage
+    # Move file to static/uploads/
     try:
-        bucket = storage_client.bucket(GCS_BUCKET)
-        blob = bucket.blob(unique_filename)
-        
-        # Upload the file
-        blob.upload_from_filename(temp_filepath)
-        
-        # Instead of direct GCS URL, use serve_image route
-        image_url = f"/serve_image/{unique_filename}"
-        
-        # Save item in database with the new image URL format
+        upload_folder = os.path.join(app.static_folder, 'uploads')
+        os.makedirs(upload_folder, exist_ok=True)
+        final_path = os.path.join(upload_folder, unique_filename)
+        os.rename(temp_filepath, final_path)
+
+        # Create image URL served from static
+        image_url = url_for('static', filename=f'uploads/{unique_filename}')
+
         new_upload = {
             "item_id": str(uuid.uuid4()),
             "user_id": user["_id"],
-            "image_url": image_url,  
-            "gcs_path": f"gs://{GCS_BUCKET}/{unique_filename}", 
-            "filename": unique_filename,
+            "image_url": image_url,
             "timestamp": datetime.utcnow().isoformat(),
             "category": predicted_category,
             "subcategory": predicted_subcategory,
@@ -853,146 +848,58 @@ def upload_image():
         }
 
         uploads_collection.insert_one(new_upload)
-        
-        # Clean up the temporary file
-        os.remove(temp_filepath)
-        
-        success_message = f"Image uploaded successfully!"
-        return render_template("upload.html", success_message=success_message)
-        
+        return render_template("upload.html", success_message="Image uploaded successfully!")
+
     except Exception as e:
-        print(f"Error uploading to Google Cloud Storage: {e}")
-        # Clean up the temporary file
+        print(f"Error saving uploaded image: {e}")
         try:
             os.remove(temp_filepath)
         except:
             pass
         return render_template("upload.html", error_message=f"Upload failed: {str(e)}")
-    
-@app.route("/serve_image/<filename>")
-def serve_image(filename):
-    """Serve images from Google Cloud Storage"""
-    if "user" not in session:
-        return "Unauthorized", 401
-    
-    temp_local_filename = None
-    try:
-        # Create a temporary file to store the downloaded image
-        _, temp_local_filename = tempfile.mkstemp()
-        
-        # Download the file from Google Cloud Storage
-        bucket = storage_client.bucket(GCS_BUCKET)
-        blob = bucket.blob(filename)
-        blob.download_to_filename(temp_local_filename)
-        
-        # Determine the MIME type based on file extension
-        mime_type = 'image/jpeg'  # Default
-        if filename.lower().endswith('.png'):
-            mime_type = 'image/png'
-        elif filename.lower().endswith('.webp'):
-            mime_type = 'image/webp'
-        
-        # Set cache control headers
-        response = send_file(
-            temp_local_filename,
-            mimetype=mime_type,
-            as_attachment=False,
-            download_name=filename
-        )
-        response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 24 hours
-        return response
-    
-    except Exception as e:
-        print(f"Error serving image {filename}: {e}")
-        return "Image not found", 404
-    finally:
-        # Always clean up the temporary file
-        if temp_local_filename and os.path.exists(temp_local_filename):
-            try:
-                os.remove(temp_local_filename)
-            except Exception as e:
-                print(f"Error removing temporary file: {e}")
-    
-@app.route("/fix_image_urls")
-def fix_image_urls():
-    if "user" not in session:
-        return "Unauthorized", 401
-        
-    user = users_collection.find_one({"username": session["user"]})
-    if not user:
-        return "User not found", 404
-    
-    # Find all uploads for this user
-    user_uploads = list(uploads_collection.find({"user_id": user["_id"]}))
-    updated_count = 0
-    
-    for item in user_uploads:
-        if "image_url" in item and "filename" in item:
-            # Create the new URL
-            filename = item["filename"]
-            new_url = f"/serve_image/{filename}"
-            
-            # Update the item
-            result = uploads_collection.update_one(
-                {"_id": item["_id"]},
-                {"$set": {"image_url": new_url}}
-            )
-            
-            if result.modified_count > 0:
-                updated_count += 1
-    
-    return f"Updated {updated_count} image URLs. Please refresh your wardrobe page."
 
 @app.route("/remove_item/<item_id>", methods=["POST"])
 def remove_item(item_id):
     if "user" not in session:
         return jsonify({"success": False, "message": "Unauthorized"}), 401
-    
+
     user = users_collection.find_one({"username": session["user"]})
     if not user:
         return jsonify({"success": False, "message": "User not found"}), 404
-    
-    # Find the item to get the filename
+
+    # Find the item
     item = uploads_collection.find_one({"item_id": item_id, "user_id": user["_id"]})
     if not item:
         return jsonify({"success": False, "message": "Item not found or not authorized to delete"}), 404
-    
-    # Delete the item from Google Cloud Storage
+
+    # Delete the image file from static/uploads/
     try:
-        bucket = storage_client.bucket(GCS_BUCKET)
-        blob = bucket.blob(item['filename'])
-        blob.delete()
+        if "image_url" in item:
+            filename = os.path.basename(item["image_url"])
+            local_path = os.path.join(app.static_folder, 'uploads', filename)
+            if os.path.exists(local_path):
+                os.remove(local_path)
     except Exception as e:
-        # Log the error but continue with database deletion
-        print(f"Error deleting file from Google Cloud Storage: {e}")
-    
-    # Delete the item from the database
+        print(f"Error deleting file from local storage: {e}")
+
+    # Delete the item from MongoDB
     result = uploads_collection.delete_one({"item_id": item_id, "user_id": user["_id"]})
-    
+
     if result.deleted_count > 0:
         # Also remove the item from any saved outfits
-        outfits_to_delete = []
-        
-        # Find outfits containing this item
-        outfits = outfits_collection.find({
+        outfits_to_delete = list(outfits_collection.find({
             "$or": [
                 {"top_id": item_id},
                 {"bottom_id": item_id},
                 {"shoe_id": item_id}
             ],
             "user_id": user["_id"]
-        })
+        }))
         
-        for outfit in outfits:
-            outfits_to_delete.append(outfit["outfit_id"])
-        
-        # Delete identified outfits
         if outfits_to_delete:
-            outfits_collection.delete_many({
-                "outfit_id": {"$in": outfits_to_delete},
-                "user_id": user["_id"]
-            })
-        
+            outfit_ids = [outfit["outfit_id"] for outfit in outfits_to_delete]
+            outfits_collection.delete_many({"outfit_id": {"$in": outfit_ids}})
+
         return jsonify({"success": True, "message": "Item deleted successfully"})
     else:
         return jsonify({"success": False, "message": "Failed to delete item"}), 500
@@ -1001,35 +908,35 @@ def remove_item(item_id):
 def clear_wardrobe():
     if "user" not in session:
         return jsonify({"success": False, "message": "Unauthorized"}), 401
-    
+
     user = users_collection.find_one({"username": session["user"]})
     if not user:
         return jsonify({"success": False, "message": "User not found"}), 404
-    
+
     try:
-        # Get all wardrobe items for this user
+        # Find all wardrobe items for this user
         wardrobe_items = list(uploads_collection.find({"user_id": user["_id"]}))
-        
-        # Delete all files from Google Cloud Storage
-        bucket = storage_client.bucket(GCS_BUCKET)
+
+        # Delete each file from local storage
         for item in wardrobe_items:
-            try:
-                blob = bucket.blob(item['filename'])
-                blob.delete()
-            except Exception as e:
-                # Continue even if some file deletions fail
-                print(f"Error deleting file {item['filename']} from GCS: {e}")
-        
-        # Delete all items from the database
+            if "image_url" in item:
+                filename = os.path.basename(item["image_url"])
+                local_path = os.path.join(app.static_folder, 'uploads', filename)
+                if os.path.exists(local_path):
+                    try:
+                        os.remove(local_path)
+                    except Exception as e:
+                        print(f"Error deleting {filename}: {e}")
+
+        # Delete wardrobe items and outfits from MongoDB
         uploads_result = uploads_collection.delete_many({"user_id": user["_id"]})
-        
-        # Delete all outfits for this user
         outfits_result = outfits_collection.delete_many({"user_id": user["_id"]})
-        
+
         return jsonify({
-            "success": True, 
+            "success": True,
             "message": f"Wardrobe cleared successfully. Removed {uploads_result.deleted_count} items and {outfits_result.deleted_count} outfits."
         })
+
     except Exception as e:
         print(f"Error clearing wardrobe: {e}")
         return jsonify({"success": False, "message": f"Error clearing wardrobe: {str(e)}"}), 500
